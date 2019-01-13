@@ -1,72 +1,25 @@
 {% extends "jqgrid.html" %}
 
-{% block other_heads %}
-<script>
-        $.jgrid = $.jgrid || {};
-        $.jgrid.no_legacy_api = true;
-        $.jgrid.useJSON = true;
-    </script>
-    <!--<script src="../jqGrid/js/jquery.jqGrid.src.js"></script>-->
-    <script src="http://www.ok-soft-gmbh.com/jqGrid/OK/jquery.jqGrid.src.js"></script>
+{% block myjqgrid %}
     <script>
-    //<![CDATA[
-    /*global $ */
-    /*jslint browser: true */
     $(function () {
         "use strict";
-        var mydata = $.get("/phylo"),
-        <!--var mydata = [-->
-                <!--{ id: "1,1",  invdate: "2007-10-01", name: "test",   note: "note",   amount: 0, tax: 0, closed: true,  ship_via: "TN", total: 0 },-->
-                <!--{ id: "2,1",  invdate: "2007-10-02", name: "test2",  note: "note2",  amount: 351.75, tax: 23.45, closed: false, ship_via: "FE", total: 375.2 },-->
-                <!--{ id: "3,1",  invdate: "2007-09-01", name: "test3",  note: "note3",  amount: 400, tax: 30, closed: false, ship_via: "FE", total: 430 },-->
-                <!--{ id: "4,1",  invdate: "2007-10-04", name: "test4",  note: "note4",  amount: 200, tax: 10, closed: true,  ship_via: "TN", total: 210 },-->
-                <!--{ id: "5,1",  invdate: "2007-10-31", name: "test5",  note: "note5",  amount: 300, tax: 20, closed: false, ship_via: "FE", total: 320 },-->
-                <!--{ id: "6,1",  invdate: "2007-09-06", name: "test6",  note: "note6",  amount: 400, tax: 30, closed: false, ship_via: "FE", total: 430 },-->
-                <!--{ id: "7,1",  invdate: "2007-10-04", name: "test7",  note: "note7",  amount: 200, tax: 10, closed: true,  ship_via: "TN", total: 210 },-->
-                <!--{ id: "8,1",  invdate: "2007-10-03", name: "test8",  note: "note8",  amount: 300, tax: 20, closed: false, ship_via: "FE", total: 320 },-->
-                <!--{ id: "9,1",  invdate: "2007-09-01", name: "test9",  note: "note9",  amount: 400, tax: 30, closed: false, ship_via: "TN", total: 430 },-->
-                <!--{ id: "10,1", invdate: "2007-09-08", name: "test10", note: "note10", amount: 500, tax: 30, closed: true,  ship_via: "TN", total: 530 },-->
-                <!--{ id: "11,1", invdate: "2007-09-08", name: "test11", note: "note11", amount: 500, tax: 30, closed: false, ship_via: "FE", total: 530 },-->
-                <!--{ id: "12,1", invdate: "2007-09-10", name: "test12", note: "note12", amount: 500, tax: 30, closed: false, ship_via: "FE", total: 530 }-->
-            <!--],-->
-            initDateSearch = function (elem) {
-                setTimeout(function () {
-                    $(elem).datepicker({
-                        dateFormat: "dd-M-yy",
-                        autoSize: true,
-                        changeYear: true,
-                        changeMonth: true,
-                        showWeek: true,
-                        showButtonPanel: true
-                    });
-                }, 100);
-            };
-
         $("#grid").jqGrid({
-            <!--data: mydata,-->
             url: '/phylo',
             datatype: 'json',
+            loadonce: true,
             colModel: [
-                { name: "name", label: "Client", width: 100 },
-                { name: "invdate", label: "Date", width: 80, align: "center", sorttype: "date",
-                    formatter: "date", formatoptions: { newformat: "d-M-Y" },
-                    searchoptions: { sopt: ["eq", "ne", "lt", "le", "gt", "ge"], dataInit: initDateSearch } },
-                { name: "amount", label: "Amount", width: 75, template: "number" },
-                { name: "tax", label: "Tax", width: 100, template: "number",
+                { name: "mutation", label: "Mutation", width: 100, template: "number",
                     searchoptions: { sopt: ["nIn", "eq", "ne", "lt", "le", "gt", "ge", "in", "ni"] } },
-                { name: "total", label: "Total", width: 60, template: "number" },
-                { name: "closed", label: "Closed", width: 70, template: "booleanCheckboxFa" },
-                { name: "ship_via", label: "Shipped via", width: 105, align: "center", formatter: "select",
-                    edittype: "select", editoptions: { value: "FE:FedEx;TN:TNT;IN:Intim", defaultValue: "IN" },
-                    stype: "select", searchoptions: { sopt: ["eq", "ne"], value: ":Any;FE:FedEx;TN:TNT;IN:IN" } },
-                { name: "note", label: "Notes", width: 60, edittype: "textarea", sortable: false }
+                { name: "haplogroup", label: "Haplogroup", width: 1000 }
+
             ],
             pager: true,
             autoencode: true,
             viewrecords: true,
             rowNum: 10,
             rowList: [5, 10, 20, "10000:All" ],
-            caption: "Demonstration custom searching operation (numeric IN)",
+            caption: "phylotree mutation to haplogroup mapping",
             customSortOperations: {
                 // the properties of customSortOperations defines new operations
                 // used in postData.filters.rules items as op peroperty
@@ -97,15 +50,5 @@
             }
         }).jqGrid("filterToolbar");
     });
-    //]]>
     </script>
-
-{% endblock %}
-
-{% block x %}
-Phylotree
-<div id="outerDiv" style="margin:5px;">
-    <table id="grid"></table>
-</div>
-
 {% endblock %}
