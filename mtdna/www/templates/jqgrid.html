@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>http://stackoverflow.com/q/28599002/315935</title>
+    <meta name="author" content="Oleg Kiriljuk">
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/redmond/jquery-ui.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!--<link rel="stylesheet" href="../jqGrid/css/ui.jqgrid.css">-->
+    <link rel="stylesheet" href="http://www.ok-soft-gmbh.com/jqGrid/OK/ui.jqgrid.css">
+    <style>
+        html, body { font-size: 75%; }
+    </style>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+    <script src="http://www.ok-soft-gmbh.com/jqGrid/OK/i18n/grid.locale-en.js"></script>
+    <script>
+        $.jgrid = $.jgrid || {};
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+    </script>
+    <!--<script src="../jqGrid/js/jquery.jqGrid.src.js"></script>-->
+    <script src="http://www.ok-soft-gmbh.com/jqGrid/OK/jquery.jqGrid.src.js"></script>
+    <script>
+    //<![CDATA[
+    /*global $ */
+    /*jslint browser: true */
+    $(function () {
+        "use strict";
+        var mydata = $.get("/phylo");
+        $("#grid").jqGrid({
+            <!--data: mydata,-->
+            url: '/phylo',
+            datatype: 'json',
+            loadonce: true,
+            colModel: [
+                { name: "mutation", label: "Mutation", width: 100, template: "number",
+                    searchoptions: { sopt: ["nIn", "eq", "ne", "lt", "le", "gt", "ge", "in", "ni"] } },
+                { name: "haplogroup", label: "Haplogroup", width: 1000r0 }
+
+            ],
+            pager: true,
+            autoencode: true,
+            viewrecords: true,
+            rowNum: 10,
+            rowList: [5, 10, 20, "10000:All" ],
+            caption: "Demonstration custom searching operation (numeric IN)",
+            customSortOperations: {
+                // the properties of customSortOperations defines new operations
+                // used in postData.filters.rules items as op peroperty
+                nIn: {
+                    operand: "nIN",        // will be displayed in searching Toolbar for example
+                    text: "numeric IN",    // will be shown in Searching Dialog or operation menu in searching toolbar
+                    filter: function (options) {
+                        // The method will be called in case of filtering on the custom operation "nIn"
+                        // All parameters of the callback are properties of the only options parameter.
+                        // It has the following properties:
+                        //     item        - the item of data (exacly like in mydata array)
+                        //     cmName      - the name of the field by which need be filtered
+                        //     searchValue - the filtered value typed in the input field of the searching toolbar
+                        var fieldData = parseFloat(options.item[options.cmName]),
+                            data = $.map(
+                                options.searchValue.split(";"),
+                                function (val) {
+                                    return parseFloat(val);
+                                }
+                            );
+                        return $.inArray(fieldData, data) >= 0;
+                    }
+                }
+            },
+            searching: {
+                searchOperators: true,
+                defaultSearch: "cn"
+            }
+        }).jqGrid("filterToolbar");
+    });
+    //]]>
+    </script>
+</head>
+<body>
+<div id="outerDiv" style="margin:5px;">
+    <table id="grid"></table>
+</div>
+</body>
+</html>
+
+
+<!--
+<link rel="stylesheet" href="https://rawgit.com/free-jqgrid/jqGrid/master/css/ui.jqgrid.css">
+{% extends "base.html" %}
+
+{% block heads %}
+<link rel="stylesheet" href="https://rawgit.com/free-jqgrid/jqGrid/master/css/ui.jqgrid.css">
+<script>
+        $.jgrid = $.jgrid || {};
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+    </script>
+
+{% block other_heads %}
+{% endblock %}
+{% endblock %}
+
+{% block body %}
+
+<br>
+{% block x %}
+
+{% endblock %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+<script src="https://rawgit.com/free-jqgrid/jqGrid/master/js/jquery.jqgrid.src.js"></script>
+{% endblock %}
+
+-->
