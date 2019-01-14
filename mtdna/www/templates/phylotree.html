@@ -9,9 +9,10 @@
             datatype: 'json',
             loadonce: true,
             colModel: [
-                { name: "mutation", label: "Mutation", width: 100, template: "number",
+                { name: "position", label: "Position", width: 100, template: "integer",
                     searchoptions: { sopt: ["nIn", "eq", "ne", "lt", "le", "gt", "ge", "in", "ni"] } },
-                { name: "haplogroup", label: "Haplogroup", width: 1000 }
+                { name: "haplogroup", label: "Haplogroup", width: 1000,
+                 searchoptions: { sopt: ["eq"]}}
 
             ],
             pager: true,
@@ -19,7 +20,7 @@
             viewrecords: true,
             rowNum: 10,
             rowList: [5, 10, 20, "10000:All" ],
-            caption: "phylotree mutation to haplogroup mapping",
+            caption: "phylotree position to haplogroup mapping",
             customSortOperations: {
                 // the properties of customSortOperations defines new operations
                 // used in postData.filters.rules items as op peroperty
@@ -51,4 +52,15 @@
         }).jqGrid("filterToolbar");
     });
     </script>
+{% endblock %}
+
+{% block mybody %}
+<hr>
+Notes:<br>
+<ul>
+    <li> Node: [haplogroup] corresponds to nearest modification on html file not real parent on route (needs to be enhanced)</li>
+    <li> ![haplogroup]: position modification retractation</li>
+    <li> NIN Position filtering allow multiple entries separated by <bold>;</bold></li>
+</ul>
+<hr>
 {% endblock %}

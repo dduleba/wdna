@@ -1,7 +1,7 @@
 import logging
+import os
 import re
 
-import os
 from lxml import html
 
 
@@ -37,7 +37,8 @@ class PhyloTree:
                     if content not in empty:
                         ids = []
                         # remove changes character
-                        for id0 in re.sub('[AGCTagctdD!()]', '', content).split():
+
+                        for id0 in re.sub('[AGCTagctdD()]', '', content).split():
                             # change range notation to multiple elements
                             if '-' in id0:
                                 self.log.debug('- ' + id0)
@@ -49,18 +50,32 @@ class PhyloTree:
                                 ids.extend(map(str, range(x[0], x[1] + 1)))
                                 continue
                             if '.' in id0:
-                                self.log.debug('. '+ id0)
+                                self.log.debug('. ' + id0)
                                 id0 = id0.split('.')[0]
+                            if '!' in id0:
+                                # todo simplify/remove duplicated code
+                                id0 = id0.replace('!', '')
+                                if root is None:
+                                    root = 'Node: ' + str(previous)
+                                self.log.debug(root + ' ' + str(ids))
+                                x = root + '!'
+                                if id0 not in self.mapping:
+                                    self.mapping[id0] = [x]
+                                else:
+                                    self.mapping[id0].append(x)
+                                continue
                             ids.append(id0)
 
                         if root is None:
                             root = 'Node: ' + str(previous)
                         self.log.debug(root + ' ' + str(ids))
+
                         for change_id in ids:
                             if change_id not in self.mapping:
                                 self.mapping[change_id] = [root]
                             else:
                                 self.mapping[change_id].append(root)
+
 
 def get_phylo_mapping():
     file_directory = os.path.dirname(__file__)
@@ -70,9 +85,10 @@ def get_phylo_mapping():
     phylo_tree.parse_file()
     return phylo_tree.mapping
 
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    mapping = get_mapping()
+    mapping = get_phylo_mapping()
 
     while True:
         change = input("Provide change: \n")

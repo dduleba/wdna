@@ -21,7 +21,10 @@ def parse_tree():
 @app.route('/phylo')
 def phylo():
     mapping = get_phylo_mapping()
-    mapping_json = [{'mutation': i, 'haplogroup': j} for i, j in mapping.items()]
+    mapping_json = []
+    for mutation, haplogroups in mapping.items():
+        for haplogroup in haplogroups:
+            mapping_json.append({'position': mutation, 'haplogroup': haplogroup})
     return jsonify(mapping_json)
 
 
