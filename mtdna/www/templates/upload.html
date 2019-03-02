@@ -1,8 +1,7 @@
 <html>
    <body>
-      Rename file names extension to txt<br>
-      Upload zip file to get zip with renamed files
-      <form action = "/return_renamed" method = "POST"
+      {{ description }}
+      <form action = "{{ action }}" method = "POST"
          enctype = "multipart/form-data">
          <input type = "file" name = "file" />
          <input type = "submit"/>
