@@ -1,0 +1,10 @@
+{% extends 'upload.html' %}
+
+
+{% block custom_form %}
+<br>
+Allowed sample match with one grouping pattern for probe name <a href="https://docs.python.org/3/library/re.html">Python REGEXP</a>
+<br>
+<input type="text" name="allowed_samples_regexp" value="t?DNA\d+-\d+_(\d+).*_.*"></input>
+<br>
+{% endblock %}

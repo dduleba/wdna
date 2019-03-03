@@ -5,7 +5,7 @@ from collections import OrderedDict
 import sys
 
 
-def convert_genmap_to_dnastat(genmap_file, dnastat_file, sample_match='tDNA\d+-\d+_(.*)_.*'):
+def convert_genmap_to_dnastat(genmap_file, dnastat_file, sample_match='t?DNA\d+-\d+_(\d+).*_.*'):
     lines = map(lambda line: line.decode('utf-8'), genmap_file)
     genmap_reader = csv.DictReader(lines, dialect='excel-tab')
     out_headers = []
@@ -26,6 +26,8 @@ def convert_genmap_to_dnastat(genmap_file, dnastat_file, sample_match='tDNA\d+-\
                 out_row['Uwagi'] = sample_name
 
             marker = genmap_sample['Marker']
+            if marker == 'AMEL':
+                continue
             out_row[marker] = genmap_sample['Allele 1']
             header_name = '{}_2'.format(marker)
             if genmap_sample['Allele 2']:

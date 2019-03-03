@@ -3,6 +3,7 @@
       {{ description }}
       <form action = "{{ action }}" method = "POST"
          enctype = "multipart/form-data">
+         {% block custom_form %} {% endblock %}
          <input type = "file" name = "file" />
          <input type = "submit"/>
       </form>

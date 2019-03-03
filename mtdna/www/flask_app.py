@@ -34,7 +34,7 @@ def phylo():
 # Tools
 @app.route('/change_extension')
 def upload_file():
-    return render_template('upload.html', action='/return_renamed', decription="""Rename file names extension to txt<br>
+    return render_template('upload.html', action='/return_renamed', description="""Rename file names extension to txt.
       Upload zip file to get zip with renamed files""")
 
 
@@ -53,17 +53,18 @@ def return_renamed():
 
 @app.route('/convert_genmap_to_dnastat')
 def upload_convert_file():
-    return render_template('upload.html', action='/return_converted',
+    return render_template('upload_genmap.html', action='/return_converted',
                            description="""Convert genmap file to dnastat format""")
 
 
 @app.route("/return_converted", methods=['POST'])
 def return_converted():
     f = request.files['file']
-
+    allowed_samples_regexp = request.form.get('allowed_samples_regexp')
+    print(allowed_samples_regexp)
     # text file required for csv
     out_file = StringIO()
-    convert_genmap_to_dnastat(f, out_file)
+    convert_genmap_to_dnastat(f, out_file, sample_match=allowed_samples_regexp)
     out_file.seek(0)
 
     # Convert output text stream to Bytes stream
