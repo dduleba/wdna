@@ -44,7 +44,7 @@ def convert_genmap_to_dnastat(genmap_file, dnastat_file, sample_match='t?DNA\d+-
         out_headers.extend(filter(lambda a: a not in out_headers, out_row.keys()))
     print(out_headers)
     print(out_rows)
-    dna_writer = csv.DictWriter(dnastat_file, out_headers)
+    dna_writer = csv.DictWriter(dnastat_file, out_headers, delimiter=';')
     dna_writer.writeheader()
     dna_writer.writerows(out_rows)
 

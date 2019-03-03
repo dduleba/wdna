@@ -34,11 +34,11 @@ def phylo():
 # Tools
 @app.route('/change_extension')
 def upload_file():
-    return render_template('upload.html', action='/return_renamed', description="""Rename file names extension to txt.
+    return render_template('upload.html', action='/return_renamed.zip', description="""Rename file names extension to txt.
       Upload zip file to get zip with renamed files""")
 
 
-@app.route("/return_renamed", methods=['POST'])
+@app.route("/return_renamed.zip", methods=['POST'])
 def return_renamed():
     f = request.files['file']
     memory_file = ZIPTool(f).change_extension('txt')
@@ -53,11 +53,11 @@ def return_renamed():
 
 @app.route('/convert_genmap_to_dnastat')
 def upload_convert_file():
-    return render_template('upload_genmap.html', action='/return_converted',
+    return render_template('upload_genmap.html', action='/return_converted.csv',
                            description="""Convert genmap file to dnastat format""")
 
 
-@app.route("/return_converted", methods=['POST'])
+@app.route("/return_converted.csv", methods=['POST'])
 def return_converted():
     f = request.files['file']
     allowed_samples_regexp = request.form.get('allowed_samples_regexp')
@@ -80,3 +80,5 @@ def return_converted():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    # all host IPS
+    # app.run(debug=True, host="0.0.0.0")
