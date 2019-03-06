@@ -1,7 +1,10 @@
-# mtdna
+# genetic_webtools
 
-Used projects:<br>
-https://github.com/free-jqgrid/jqGrid
-* https://github.com/free-jqgrid/jqGrid/wiki/Custom-filtering-searching-Operation
+Main purpose of this project its to provide web tools for genetic analisis work simplification.
 
-view-source:http://www.ok-soft-gmbh.com/jqGrid/OK/customFilterOperartion.htm
+## Used projects:
+
+* [free jqGrid](https://github.com/free-jqgrid/jqGrid)
+    * [Custom filtering oerpation at GitHub](https://github.com/free-jqgrid/jqGrid/wiki/Custom-filtering-searching-Operation)
+* [flask](http://flask.pocoo.org/)
+* [lxml](https://lxml.de/tutorial.html)

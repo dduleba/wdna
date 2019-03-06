@@ -3,9 +3,9 @@ from io import StringIO, BytesIO
 from flask import Flask, request, render_template, Response, jsonify
 from werkzeug import FileWrapper
 
-from mtdna.phylotree.parse_html import get_phylo_mapping
-from mtdna.tools.genmapper_to_dnastat import convert_genmap_to_dnastat
-from mtdna.tools.ziptool import ZIPTool
+from dna.phylotree.parse_html import get_phylo_mapping
+from dna.tools.genmapper_to_dnastat import convert_genmap_to_dnastat
+from dna.tools.ziptool import ZIPTool
 
 app = Flask(__name__)
 
