@@ -3,12 +3,14 @@ from io import StringIO, BytesIO
 from flask import Flask, request, render_template, Response, jsonify
 from werkzeug import FileWrapper
 
-from dna.phylotree.parse_html import get_phylo_mapping
-from dna.tools.genmapper_to_dnastat import convert_genmap_to_dnastat
-from dna.tools.ziptool import ZIPTool
+from wdna.phylotree.parse_html import get_phylo_mapping
+from wdna.tools.genmapper_to_dnastat import convert_genmap_to_dnastat
+from wdna.tools.ziptool import ZIPTool
 
 app = Flask(__name__)
 
+
+ALLOWED_SAMPLES_REGEXP = 't?DNA\d+-\d+_(\d+)[AB](_IF\+)?$'
 
 @app.route('/')
 def index():
@@ -53,7 +55,9 @@ def return_renamed():
 
 @app.route('/convert_genmap_to_dnastat')
 def upload_convert_file():
-    return render_template('upload_genmap.html', action='/return_converted.csv',
+    return render_template('upload_genmap.html',
+                           action='/return_converted.csv',
+                           allowed_samples_regexp=ALLOWED_SAMPLES_REGEXP,
                            description="""Convert genmap file to dnastat format""")
 
 
@@ -61,7 +65,6 @@ def upload_convert_file():
 def return_converted():
     f = request.files['file']
     allowed_samples_regexp = request.form.get('allowed_samples_regexp')
-    print(allowed_samples_regexp)
     # text file required for csv
     out_file = StringIO()
     convert_genmap_to_dnastat(f, out_file, sample_match=allowed_samples_regexp)
@@ -77,8 +80,8 @@ def return_converted():
     res = Response(w, mimetype='text/csv', direct_passthrough=True)
     return res
 
+def main(debug=False):
+    app.run(debug=debug)
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    # all host IPS
-    # app.run(debug=True, host="0.0.0.0")
+    main(debug=True)

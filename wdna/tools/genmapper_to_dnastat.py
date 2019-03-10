@@ -13,11 +13,11 @@ def convert_genmap_to_dnastat(genmap_file, dnastat_file, sample_match='t?DNA\d+-
     out_row = OrderedDict()
     for genmap_sample in genmap_reader:
         sample_name = genmap_sample['Sample Name']
-        print(sample_name)
+        # print("'{}'".format(sample_name))
         if re.match(sample_match, sample_name):
             if sample_name not in out_row.values():
                 if out_row:
-                    print('\t', out_row)
+                    # print('\t', out_row)
                     out_row['Uwagi'] = out_row.pop('Uwagi')
                     out_rows.append(out_row)
                     out_headers.extend(filter(lambda a: a not in out_headers, out_row.keys()))
@@ -42,8 +42,8 @@ def convert_genmap_to_dnastat(genmap_file, dnastat_file, sample_match='t?DNA\d+-
         out_row['Uwagi'] = out_row.pop('Uwagi')
         out_rows.append(out_row)
         out_headers.extend(filter(lambda a: a not in out_headers, out_row.keys()))
-    print(out_headers)
-    print(out_rows)
+    # print(out_headers)
+    # print(out_rows)
     dna_writer = csv.DictWriter(dnastat_file, out_headers, delimiter=';')
     dna_writer.writeheader()
     dna_writer.writerows(out_rows)

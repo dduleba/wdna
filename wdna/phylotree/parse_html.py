@@ -85,14 +85,16 @@ def get_phylo_mapping():
     phylo_tree.parse_file()
     return phylo_tree.mapping
 
-
-if __name__ == '__main__':
+def main():
     logging.basicConfig(level=logging.DEBUG)
     mapping = get_phylo_mapping()
-
     while True:
         change = input("Provide change: \n")
         if change in mapping:
             print(mapping[change])
         else:
             print("'{}' was not found".format(change))
+
+
+if __name__ == '__main__':
+    main()
