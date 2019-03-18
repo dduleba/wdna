@@ -29,7 +29,14 @@ def phylo():
     mapping_json = []
     for mutation, haplogroups in mapping.items():
         for haplogroup in haplogroups:
-            mapping_json.append({'position': mutation, 'haplogroup': haplogroup})
+            if haplogroup.endswith('!!'):
+                back_mutation = 'double'
+            elif haplogroup.endswith('!'):
+                back_mutation = 'yes'
+            else:
+                back_mutation = ''
+            haplogroup = haplogroup.rstrip('!')
+            mapping_json.append({'position': mutation, 'haplogroup': haplogroup, 'back_mutation': back_mutation})
     return jsonify(mapping_json)
 
 

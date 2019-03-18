@@ -52,13 +52,14 @@ class PhyloTree:
                             if '.' in id0:
                                 self.log.debug('. ' + id0)
                                 id0 = id0.split('.')[0]
-                            if '!' in id0:
+                            if id0.endswith('!'):
                                 # todo simplify/remove duplicated code
+                                x_count = id0.count('!')
                                 id0 = id0.replace('!', '')
                                 if root is None:
                                     root = 'Node: ' + str(previous)
                                 self.log.debug(root + ' ' + str(ids))
-                                x = root + '!'
+                                x = root + '!' * x_count
                                 if id0 not in self.mapping:
                                     self.mapping[id0] = [x]
                                 else:

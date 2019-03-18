@@ -1,7 +1,7 @@
 {% extends "jqgrid.html" %}
 
 {% block myjqgrid %}
-    <script>
+<script>
     $(function () {
         "use strict";
         $("#grid").jqGrid({
@@ -9,16 +9,21 @@
             datatype: 'json',
             loadonce: true,
             colModel: [
-                { name: "position", label: "Position", width: 100, template: "integer",
+                { name: "position", label: "Position", width: 100, template: "number",
+                    formatoptions: {"decimalPlaces": 0, thousandsSeparator: ""},
                     searchoptions: { sopt: ["nIn", "eq", "ne", "lt", "le", "gt", "ge", "in", "ni"] } },
                 { name: "haplogroup", label: "Haplogroup", width: 1000,
-                 searchoptions: { sopt: ["eq"]}}
+                 searchoptions: { sopt: ["eq"]}
+                 },
+                 { name: "back_mutation", label: "Back mutation", width: 100,
+                 searchoptions: { sopt: ["eq"]}
+                 }
 
             ],
             pager: true,
             autoencode: true,
             viewrecords: true,
-            rowNum: 10,
+            rowNum: 20,
             rowList: [5, 10, 20, "10000:All" ],
             caption: "phylotree position to haplogroup mapping",
             customSortOperations: {
@@ -51,16 +56,21 @@
             }
         }).jqGrid("filterToolbar");
     });
-    </script>
+
+</script>
 {% endblock %}
 
 {% block mybody %}
 <hr>
 Notes:<br>
 <ul>
-    <li> Node: [haplogroup] corresponds to nearest modification on html file not real parent on route (needs to be enhanced)</li>
+    <li> Node: [haplogroup] corresponds to nearest modification on html file not real parent on route (needs to be
+        enhanced)
+    </li>
     <li> ![haplogroup]: position modification retractation</li>
-    <li> NIN Position filtering allow multiple entries separated by <bold>;</bold></li>
+    <li> NIN Position filtering allow multiple entries separated by
+        <bold>;</bold>
+    </li>
 </ul>
 <hr>
 {% endblock %}
