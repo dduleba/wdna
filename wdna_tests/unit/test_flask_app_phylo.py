@@ -10,7 +10,7 @@ class FlaskAppTestPhyloCase(TestCase):
         super().setUpClass()
         flask_app.app.testing = True
         cls.client = flask_app.app.test_client()
-        cls.rv = cls.client.get('/phylo')
+        cls.rv = cls.client.get('/wdna/phylo')
 
     def test_phylo(self):
         self.assertEqual(self.rv.status_code, 200)

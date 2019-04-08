@@ -26,7 +26,7 @@ class FlaskAppTestZipRenameCase(TestCase):
         zip_file_in = TestDataGenerator.get_zip_with_files(file_count=file_count)
         data = {'file':(zip_file_in, 'test.zip')}
 
-        rv = self.client.post('/return_renamed.zip',
+        rv = self.client.post('/wdna/return_renamed.zip',
                               data=data, follow_redirects=True,
                               content_type='multipart/form-data'
                               )

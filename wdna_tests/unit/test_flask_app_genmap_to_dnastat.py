@@ -20,7 +20,7 @@ class FlaskAppTestGetCase(TestCase):
                 'allowed_samples_regexp': flask_app.ALLOWED_SAMPLES_REGEXP
                 }
 
-        rv = self.client.post('/return_converted.csv',
+        rv = self.client.post('/wdna/return_converted.csv',
                               data=data, follow_redirects=True,
                               content_type='multipart/form-data'
                               )
