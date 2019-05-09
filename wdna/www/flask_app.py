@@ -1,17 +1,19 @@
 from io import StringIO, BytesIO
 
-from flask import Flask, request, render_template, Response, jsonify, Blueprint
 from werkzeug import FileWrapper
 
+from flask import Flask, request, render_template, Response, jsonify, Blueprint
 from wdna.phylotree.parse_html import get_phylo_mapping
 from wdna.tools.genmapper_to_dnastat import convert_genmap_to_dnastat
+from wdna.tools.genmapper_to_report import convert_genmap_to_report
 from wdna.tools.ziptool import ZIPTool
 
 # app = Flask(__name__)
 bp_wdna = Blueprint('wdna', __name__, template_folder='templates', static_folder='static')
 
-
 ALLOWED_SAMPLES_REGEXP = 't?DNA\d+-\d+_(\d+)[AB](_IF\+)?$'
+ALLOWED_SAMPLES_REPORT_REGEXP = 'DR\d+-\d+_(\d+).*_.*$'
+
 
 @bp_wdna.route('/wdna/index')
 def index():
@@ -88,12 +90,42 @@ def return_converted():
     res = Response(w, mimetype='text/csv', direct_passthrough=True)
     return res
 
+
+@bp_wdna.route('/wdna/convert_genmap_to_report')
+def upload_convert_report_file():
+    return render_template('upload_genmap.html',
+                           action='/wdna/return_converted_report.csv',
+                           allowed_samples_regexp=ALLOWED_SAMPLES_REPORT_REGEXP,
+                           description="""Convert genmap file to report""")
+
+
+@bp_wdna.route("/wdna/return_converted_report.csv", methods=['POST'])
+def return_converted_report():
+    f = request.files['file']
+    allowed_samples_regexp = request.form.get('allowed_samples_regexp')
+    # text file required for csv
+    out_file = StringIO()
+    convert_genmap_to_report(f, out_file, sample_match=allowed_samples_regexp)
+    out_file.seek(0)
+
+    # Convert output text stream to Bytes stream
+    bytes_stream = BytesIO(out_file.read().encode('utf-8'))
+
+    # FileWrapper used because of Pythonanywhere
+    # https://stackoverflow.com/questions/50087728/alternative-of-send-file-in-flask-on-pythonanywhere
+    w = FileWrapper(bytes_stream)
+
+    res = Response(w, mimetype='text/csv', direct_passthrough=True)
+    return res
+
+
 app = Flask(__name__)
 app.register_blueprint(bp_wdna)
 
 
 def main(debug=False):
     app.run(port=8090, debug=debug)
+
 
 if __name__ == '__main__':
     main(debug=True)
