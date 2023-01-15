@@ -1,12 +1,13 @@
 from io import StringIO, BytesIO
 
-from werkzeug import FileWrapper
-
 from flask import Flask, request, render_template, Response, jsonify, Blueprint
+
 from wdna.phylotree.parse_html import get_phylo_mapping
 from wdna.tools.genmapper_to_dnastat import convert_genmap_to_dnastat
 from wdna.tools.genmapper_to_report import convert_genmap_to_report
 from wdna.tools.ziptool import ZIPTool
+
+# from werkzeug import FileWrapper
 
 # app = Flask(__name__)
 bp_wdna = Blueprint('wdna', __name__, template_folder='templates', static_folder='static')
@@ -57,8 +58,8 @@ def return_renamed():
 
     # FileWrapper used because of Pythonanywhere
     # https://stackoverflow.com/questions/50087728/alternative-of-send-file-in-flask-on-pythonanywhere
-    w = FileWrapper(memory_file)
-
+    # w = FileWrapper(memory_file)
+    w = memory_file
     res = Response(w, mimetype='application/zip', direct_passthrough=True)
     return res
 
@@ -85,8 +86,8 @@ def return_converted():
 
     # FileWrapper used because of Pythonanywhere
     # https://stackoverflow.com/questions/50087728/alternative-of-send-file-in-flask-on-pythonanywhere
-    w = FileWrapper(bytes_stream)
-
+    # w = FileWrapper(bytes_stream)
+    w = bytes_stream
     res = Response(w, mimetype='text/csv', direct_passthrough=True)
     return res
 
@@ -113,8 +114,8 @@ def return_converted_report():
 
     # FileWrapper used because of Pythonanywhere
     # https://stackoverflow.com/questions/50087728/alternative-of-send-file-in-flask-on-pythonanywhere
-    w = FileWrapper(bytes_stream)
-
+    # w = FileWrapper(bytes_stream)
+    w = bytes_stream
     res = Response(w, mimetype='text/csv', direct_passthrough=True)
     return res
 
