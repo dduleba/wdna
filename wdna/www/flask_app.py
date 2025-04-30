@@ -27,6 +27,11 @@ def parse_tree():
     return render_template('phylotree.html')
 
 
+@bp_wdna.route('/wdna/sequence')
+def parse_sequence():
+    return render_template('sequences.html')
+
+
 @bp_wdna.route('/wdna/phylo')
 def phylo():
     mapping = get_phylo_mapping()
