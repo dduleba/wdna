@@ -28,51 +28,12 @@
                 colModel: [
                     { key:true, name: 'GenBank accession number', index: 'GenBank accession number', width: "100" , 
                      formatter: 'showlink', formatoptions: {baseLinkUrl:'http://www.ncbi.nlm.nih.gov/nuccore/',idName:'term'}},
-                    { name: 'Haplogroup', index: 'Haplogroup', width: "100", stype: 'select', 
-                      searchoptions: {
-                        dataUrl: "{{ url_for('wdna.static', filename='haplogroups.json') }}",
-                        buildSelect: function(data) {
-                            var response = $.parseJSON(data);
-                            var s = '<select>';
-                            s += '<option value="">All</option>';
-                            for (var i = 0; i < response.length; i++) {
-                                s += '<option value="' + response[i] + '">' + response[i] + '</option>';
-                            }
-                            return s + '</select>';
-                        }
-                      } 
-                    },
-                    { name: 'Region', index: 'Region', width: "100", stype: 'select',
-                      searchoptions: {
-                        dataUrl: "{{ url_for('wdna.static', filename='regions.json') }}",
-                        buildSelect: function(data) {
-                            var response = $.parseJSON(data);
-                            var s = '<select>';
-                            s += '<option value="">All</option>';
-                            for (var i = 0; i < response.length; i++) {
-                                s += '<option value="' + response[i] + '">' + response[i] + '</option>';
-                            }
-                            return s + '</select>';
-                        }
-                      }
-                    },
+                    { name: 'Haplogroup', index: 'Haplogroup', width: "100"},
+                    { name: 'Region', index: 'Region', width: "100"},
                     { name: 'Subsubregion', index: 'Subsubregion', width: "80" },
                     { name: 'Author', index: 'Author', width: "100" },
                     { name: 'Source', index: 'Source', width: "400" },
-                    { name: 'Breed of dog', index: 'Breed of dog', width: "200", stype: 'select',
-                      searchoptions: {
-                        dataUrl: "{{ url_for('wdna.static', filename='breeds.json') }}",
-                        buildSelect: function(data) {
-                            var response = $.parseJSON(data);
-                            var s = '<select>';
-                            s += '<option value="">All</option>';
-                            for (var i = 0; i < response.length; i++) {
-                                s += '<option value="' + response[i] + '">' + response[i] + '</option>';
-                            }
-                            return s + '</select>';
-                        }
-                      }
-                    },
+                    { name: 'Breed of dog', index: 'Breed of dog', width: "200"},
                     { name: 'Group', index: 'Group', width: "150" },
                     { name: 'Section', index: 'Section', width: "150" },
                     { name: 'Subsection', index: 'Subsection', width: "150" },
