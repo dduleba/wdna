@@ -1,0 +1,49 @@
+* {
+	margin: 0;
+}
+html, body {
+	min-height: 500px;
+	min-width: 820px;
+	height: 100%;
+	font-family: "Courier New", Arial
+}
+a:hover{
+	background-color: #FBFBFB
+}
+.span{
+padding: 1em 1em 0;
+}
+h2{
+
+	//margin: 15px;
+}
+h3{
+	padding: 1em 0 1em;
+}
+.wrapper {
+	min-height: 100%;
+	height: auto !important; /* This line and the next line are not necessary unless you need IE6 support */
+	height: 100%;
+	margin: 0 auto -100px; /* the bottom margin is the negative value of the footer's height */
+}
+.content{
+	margin: 50px 10px 50px 10px;
+}
+.footer, .push {
+	height: 100px; /* .push must be the same height as .footer */
+	font-size: small;
+}
+.logo{
+float: right;
+width: 200px;
+height: 135px;
+}
+#menu {
+  position: fixed;
+  left: 1em;
+  bottom: 10px;
+  background: white;
+  border: 2px solid gray;
+  border-radius: 10px;
+  padding: 5px;
+  }

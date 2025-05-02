@@ -1,0 +1,1662 @@
+[
+  {
+    "name": "COY",
+    "parent": "null",
+    "children": [
+      {
+        "name": "ABCEF",
+        "parent": "COY",
+        "mods": ["2854","3451","4591","4595","6767","6881","8108","8390","11897","12665","14806","15287","15625","15955"],
+        "hide" : false,
+        "children": [
+          {
+            "name": "ABCE",
+            "parent": "ABCEF",
+            "hide" : false,
+            "mods" : ["1689","3628","3940","8670"],
+            "children" : [
+              {
+              "name": "A",
+              "parent": "ABCE",
+              "hide" : false,
+              "mods" : ["1454","3469","3598","4517","5009","6257","6470","8225","8425","8991","10404","10533T","11250","11402","11963","12813","13261","13660","13708","13777","14608","15435","15639A","15800","15912"],
+              "children" : [
+                {
+                  "name": "A1-3",
+                  "parent": "A",
+                  "hide" : false,
+                  "mods" : ["2232"],
+                  "children" : [
+                  {
+                    "name": "A1",
+                    "parent": "A1-3",
+                    "hide" : false,
+                    "mods" : ["3406","8323","8703","8764T","10917","12788"],
+                    "children" : [
+                    {
+                      "name": "A1a",
+                      "parent": "A1",
+                      "hide" : false,
+                      "mods" : ["2962"],
+                      "children" : [
+                      {
+                        "name": "A1a1",
+                        "parent": "A1a",
+                        "hide" : false,
+                        "mods" : ["3196","8281","10992","15214"],
+                         "children" : [
+                        {
+                          "name": "A1a1a",
+                          "parent": "A1a1",
+                          "hide" : false,
+                          "mods" : ["2683","15639T"],
+                          "children" : [
+                          {
+                            "name": "A1a1a1",
+                            "parent": "A1a1a",
+                            "hide" : false,
+                            "mods" : ["5367"],
+                            "children" : [
+                            {
+                              "name": "A1a1a1a",
+                              "parent": "A1a1a1",
+                              "hide" : false,
+                              "mods" : ["15814"],
+                              "children" : [
+                              {
+                                "name": "A1a1a1a1",
+                                "parent": "A1a1a1a",
+                                "hide" : false,
+                                "mods" : [8807,"13299A"],
+                                "children" : [
+                                {
+                                  "name": "A1a1a1a1a*",
+                                  "parent": "A1a1a1a1",
+                                  "hide" : false,
+                                  "mods" : ["2679.1G",6065,8368,"9914.1GT"]
+                                }
+                                ]
+                              }
+
+                              ]
+                            }
+                            ]
+                          },
+                          {
+                            "name": "A1a1a2",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : ["15625"],
+                            "children" :[
+                            {
+                              "name": "A1a1a2a",
+                              "parent": "A1a1a2",
+                              "hide" : true,
+                              "mods" : [7171,13102]
+                            },
+                            {
+                              "name": "A1a1a2b",
+                              "parent": "A1a1a2",
+                              "hide" : true,
+                              "mods" : [1181,8227]
+                            }
+                            ]
+                          },
+                          {
+                            "name": "A1a1a3",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : ["11939","13189"]
+                          },
+                          {
+                            "name": "A1a1a4",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : ["8479","11517",12013]
+                          },
+                          {
+                            "name": "A1a1a5",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : [8331],
+                            "children" :[
+                            {
+                              "name": "A1a1a5a",
+                              "parent": "A1a1a5",
+                              "hide" : true,
+                              "mods" : [2329,7923,"15639C"]
+                            }
+                            ]
+                          },
+                          {
+                            "name": "A1a1a6",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : ["3934"]
+                          },
+                          {
+                            "name": "A1a1a7",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : ["12346"]
+                          },
+                          {
+                            "name": "A1a1a8",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : [8911,9025]
+                          },
+                          {
+                            "name": "A1a1a9",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : ["7308"]
+                          },
+                          {
+                            "name": "A1a1a10",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : [3749,11808,15638],
+                            "children" :[
+                            {
+                              "name": "A1a1a10a",
+                              "parent": "A1a1a10",
+                              "hide" : true,
+                              "mods" : [14249]
+                            }
+                            ]
+                          },
+                          {
+                            "name": "A1a1a11",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : [15618]
+                          },
+                          {
+                            "name": "A1a1a12",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : [2625,13781,15665]
+                          },
+						  {
+                            "name": "A1a1a13",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : [8772]
+							},
+						  {
+                            "name": "A1a1a14",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : [11728]
+								},
+						  {
+                            "name": "A1a1a15",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : [291,4004,9714]
+							},
+							 {
+                            "name": "A1a1a16",
+                            "parent": "A1a1a",
+                            "hide" : true,
+                            "mods" : [7195]
+                          }
+                          ]
+                        },
+                        {
+                          "name": "A1a1b",
+                          "parent": "A1a1",
+                          "hide" : true,
+                          "mods" : ["10165"],
+                          "children":[
+                          {
+                            "name": "A1a1b1",
+                            "parent": "A1a1b",
+                            "hide" : true,
+                            "mods" : ["8536"],
+                            "children":[
+                            {
+                              "name": "A1a1b1a",
+                              "parent": "A1a1b1",
+                              "hide" : true,
+                              "mods" : ["14474"],
+                              "children":[
+                              {
+                                "name": "A1a1b1a1",
+                                "parent": "A1a1b1a",
+                                "hide" : true,
+                                "mods" : [4762]
+                              },{
+                                "name": "A1a1b1a2",
+                                "parent": "A1a1b1a",
+                                "hide" : true,
+                                "mods" : [7253],
+								"children":[
+								{
+								"name": "A1a1b1a2a",
+                                "parent": "A1a1b1a2",
+                                "hide" : true,
+                                "mods" : [13842]
+								
+								}
+								]
+                              },
+                              {
+                                "name": "A1a1b1a3",
+                                "parent": "A1a1b1a",
+                                "hide" : true,
+                                "mods" : [7112]
+                              }
+                              ]
+                            },
+                            {
+                              "name": "A1a1b1b",
+                              "parent": "A1a1b1",
+                              "hide" : true,
+                              "mods" : ["6629"],
+							  			"children":[
+                            {
+                              "name": "A1a1b1b1",
+                              "parent": "A1a1b1b",
+                              "hide" : true,
+                              "mods" : [13268,14822]
+                            }
+                           ] 
+							   },
+                            {
+                              "name": "A1a1b1c",
+                              "parent": "A1a1b1",
+                              "hide" : true,
+                              "mods" : ["3373"]
+                            }
+                            ]
+                          },
+                          {
+                            "name": "A1a1b2",
+                            "parent": "A1a1b",
+                            "hide" : true,
+                            "mods" : [6629]
+                          }
+                          ]
+                        },
+                        {
+                          "name": "A1a1c",
+                          "parent": "A1a1",
+                          "hide" : true,
+                          "mods" : ["5231"],
+                          "children":[
+                            {
+                              "name": "A1a1c1",
+                              "parent": "A1a1c",
+                              "hide" : true,
+                              "mods" : [8068],
+							  "children":[
+                            {
+                              "name": "A1a1c1a",
+                              "parent": "A1a1c1",
+                              "hide" : true,
+                              "mods" : [3520,6180,6632,"15651A"]
+                            }
+                           ]
+                            },
+							    {
+                              "name": "A1a1c2",
+                              "parent": "A1a1c",
+                              "hide" : true,
+                              "mods" : [10386]
+                            
+							     },
+							    {
+                              "name": "A1a1c3",
+                              "parent": "A1a1c",
+                              "hide" : true,
+                              "mods" : [3435]
+							       },
+							    {
+                              "name": "A1a1c4",
+                              "parent": "A1a1c",
+                              "hide" : true,
+                              "mods" : [2276,9120,11840,13481]
+                            }
+                            
+                            ]
+                        },
+                        {
+                          "name": "A1a1d",
+                          "parent": "A1a1",
+                          "hide" : true,
+                          "mods" : ["11625","15553","1751delT"]
+                        },
+                        {
+                          "name": "A1a1e",
+                          "parent": "A1a1",
+                          "hide" : true,
+                          "mods" : ["150"],
+                          "children":[
+                            {
+                              "name": "A1a1e1",
+                              "parent": "A1a1e",
+                              "hide" : true,
+                              "mods" : [12668],
+							  "children":[
+                            {
+                              "name": "A1a1e1a",
+                              "parent": "A1a1e1",
+                              "hide" : true,
+                              "mods" : [15271]
+                            }
+                           ] 
+                            }
+                           ] 
+                        },
+						  {
+                          "name": "A1a1f",
+                          "parent": "A1a1",
+                          "hide" : true,
+                          "mods" : [3442]
+                        }
+                        ]
+                      },
+                      {
+                        "name": "A1a2",
+                        "parent": "A1a",
+                        "hide" : true,
+                        "mods" : ["4607","8572","13678"],
+                        "children":[
+                          {
+                            "name": "A1a2a",
+                            "parent": "A1a2",
+                            "hide" : true,
+                            "mods" : [15625]
+                          },
+                          {
+                            "name": "A1a2b",
+                            "parent": "A1a2",
+                            "hide" : true,
+                            "mods" : [4399,8631]
+                          }
+                         ] 
+                      }
+                    ]
+                    },
+                    {
+                      "name": "A1b",
+                      "parent": "A1",
+                      "hide" : true,
+                      "mods" : ["15627"],
+                      "children":[
+                      {
+                        "name": "A1b1",
+                        "parent": "A1b",
+                        "hide" : true,
+                        "mods" : [15955],
+                        "children":[
+                        {
+                          "name": "A1b1a",
+                          "parent": "A1b1",
+                          "hide" : true,
+                          "mods" : [1351,4940,6401,6554,7593,"10611T",14977,15620],
+                          "children":[
+                          {
+                            "name": "A1b1a1",
+                            "parent": "A1b1a",
+                            "hide" : true,
+                            "mods" : [4303],
+                            "children":[
+                            {
+                              "name": "A1b1a1a",
+                              "parent": "A1b1a1",
+                              "hide" : true,
+                              "mods" : [12200],
+                              "children":[
+								  {
+									"name": "A1b1a1a1",
+									"parent": "A1b1a1a",
+									"hide" : true,
+									"mods" : [9912]
+								  },
+								  {
+									"name": "A1b1a1a2",
+									"parent": "A1b1a1a",
+									"hide" : true,
+									"mods" : [4366]
+								  },
+								  {
+									"name": "A1b1a1a3",
+									"parent": "A1b1a1a",
+									"hide" : true,
+									"mods" : [2646]
+								  },
+								  {
+									"name": "A1b1a1a4",
+									"parent": "A1b1a1a",
+									"hide" : true,
+									"mods" : ["11120T",11133,11477]
+								  },
+								  {
+									"name": "A1b1a1a5",
+									"parent": "A1b1a1a",
+									"hide" : true,
+									"mods" : [13783]
+								  }
+								  ]
+                            },
+                            {
+                              "name": "A1b1a1b",
+                              "parent": "A1b1a1",
+                              "hide" : true,
+                              "mods" : [14977]
+                            },
+                            {
+                              "name": "A1b1a1c",
+                              "parent": "A1b1a1",
+                              "hide" : true,
+                              "mods" : [607]
+                            },
+							 {
+                              "name": "A1b1a1d",
+                              "parent": "A1b1a1",
+                              "hide" : true,
+                              "mods" : [7927]
+                            }
+                            ]
+                          },
+                          {
+                            "name": "A1b1a2",
+                            "parent": "A1b1a",
+                            "hide" : true,
+                            "mods" : [7253],
+                            "children":[
+                            {
+                              "name": "A1b1a2a",
+                              "parent": "A1b1a2",
+                              "hide" : true,
+                              "mods" : [10319],
+                              "children" : [
+                              {
+                                "name": "A1b1a2a1",
+                                "parent": "A1b1a2a",
+                                "hide" : true,
+                                "mods" : [15665],
+								"children" : [
+                              {
+                                "name": "A1b1a2a1a",
+                                "parent": "A1b1a2a1",
+                                "hide" : true,
+                                "mods" : [8661,11832]
+                              }
+                              ]
+                              },
+                              {
+                                "name": "A1b1a2a2",
+                                "parent": "A1b1a2a",
+                                "hide" : true,
+                                "mods" : [3088]
+                              }
+                              ]
+                            },
+                            {
+                              "name": "A1b1a2b",
+                              "parent": "A1b1a2",
+                              "hide" : true,
+                              "mods" : [13514],
+                              "children" : [
+                              {
+                                "name": "A1b1a2b1",
+                                "parent": "A1b1a2b",
+                                "hide" : true,
+                                "mods" : [6041,10830],
+								  "children" : [
+                              {
+                                "name": "A1b1a2b1a",
+                                "parent": "A1b1a2b1",
+                                "hide" : true,
+                                "mods" : [1190]
+                              }
+                              ]
+                              }
+                              ]
+                            },
+                            {
+                              "name": "A1b1a2c",
+                              "parent": "A1b1a2",
+                              "hide" : true,
+                              "mods" : [10499]
+                            }
+                            ]
+                          }
+                          ]
+                        },
+                        {
+                          "name": "A1b1b",
+                          "parent": "A1b1",
+                          "hide" : true,
+                          "mods" : [1683,8805,12656],
+                          "children" : [
+                          {
+                            "name": "A1b1b1",
+                            "parent": "A1b1b",
+                            "hide" : true,
+                            "mods" : [377,6882,7817,8575,10513,16576],
+                            "children" : [
+                            {
+                              "name": "A1b1b1a",
+                              "parent": "A1b1b1",
+                              "hide" : true,
+                              "mods" : [15100,"13061A"],
+							  	"children":[
+                            {
+                              "name": "A1b1b1a1",
+                              "parent": "A1b1b1a",
+                              "hide" : true,
+                              "mods" : [3489,9943]
+                            },
+							   {
+                              "name": "A1b1b1a2",
+                              "parent": "A1b1b1a",
+                              "hide" : true,
+                              "mods" : [7679,14426,15955]
+                            }
+                           ] 
+                            },
+                            {
+                              "name": "A1b1b1b",
+                              "parent": "A1b1b1",
+                              "hide" : true,
+                              "mods" : [10470,"13061A","14504C",15553],
+							  	"children":[
+                            {
+                              "name": "A1b1b1b1",
+                              "parent": "A1b1b1b",
+                              "hide" : true,
+                              "mods" : [11526,15627,15955]
+                            }
+                           ] 
+                            }
+                            ]
+                          }
+                          ]
+                        }
+                        ]
+                      },
+                      {
+                        "name": "A1b2",
+                        "parent": "A1b",
+                        "hide" : true,
+                        "mods" : [4169,5855,6518,9838,15483],
+                        "children":[
+                        {
+                          "name": "A1b2a",
+                          "parent": "A1b2",
+                          "hide" : true,
+                          "mods" : [1662,4572,7923,10613,11172,12401],
+                          "children":[
+                          {
+                            "name": "A1b2a1",
+                            "parent": "A1b2a",
+                            "hide" : true,
+                            "mods" : [12063],
+                            "children":[
+                            {
+                              "name": "A1b2a1a",
+                              "parent": "A1b2a1",
+                              "hide" : true,
+                              "mods" : [4135,10346],
+                              "children":[
+                              {
+                                "name": "A1b2a1a1",
+                                "parent": "A1b2a1a",
+                                "hide" : true,
+                                "mods" : [463,6967]
+                              },
+                              {
+                                "name": "A1b2a1a2",
+                                "parent": "A1b2a1a",
+                                "hide" : true,
+                                "mods" : [15345]
+                              }
+                              ]
+                            },
+							 {
+                                "name": "A1b2a1b",
+                                "parent": "A1b2a1",
+                                "hide" : true,
+                                "mods" : [5937,15912],
+								"children":[
+                              {
+                                "name": "A1b2a1b1",
+                                "parent": "A1b2a1b",
+                                "hide" : true,
+                                "mods" : [6332,14275]
+                              },
+                              {
+                                "name": "A1b2a1b2",
+                                "parent": "A1b2a1b",
+                                "hide" : true,
+                                "mods" : [13444]
+                              }
+                              ]
+                              }
+                            ]
+                          },
+                          {
+                            "name": "A1b2a2",
+                            "parent": "A1b2a",
+                            "hide" : true,
+                            "mods" : [5937,15912],
+                            "children":[
+                            {
+                              "name": "A1b2a2a",
+                              "parent": "A1b2a2",
+                              "hide" : true,
+                              "mods" : [6332,14275],
+                              "children":[
+                              {
+                                "name": "A1b2a2a1",
+                                "parent": "A1b2a2a",
+                                "hide" : true,
+                                "mods" : [12063]
+                              }
+                              ]
+                            },
+                            {
+                              "name": "A1b2a2b",
+                              "parent": "A1b2a2",
+                              "hide" : true,
+                              "mods" : [12063],
+                              "children":[
+                              {
+                                "name": "A1b2a2b1",
+                                "parent": "A1b2a2b",
+                                "hide" : true,
+                                "mods" : [15120]
+                              }
+                              ]
+                            }
+                            ]
+                          }
+                          ]
+                        },
+                        {
+                          "name": "A1b2b",
+                          "parent": "A1b2",
+                          "hide" : true,
+                          "mods" : [5663,7145,7528,8221,9928,10337,12063,13927]
+                        }
+                        ]
+                      },
+                      {
+                        "name": "A1b3",
+                        "parent": "A1b",
+                        "hide" : true,
+                        "mods" : [2833,6302,8242,9896,"11657A",11813,15632],
+                        "children": [
+                        {
+                          "name": "A1b3a",
+                          "parent": "A1b3",
+                          "hide" : true,
+                          "mods" : [3676,11907],
+                          "children": [
+                          {
+                            "name": "A1b3a1",
+                            "parent": "A1b3a",
+                            "hide" : true,
+                            "mods" : [8850],
+							  "children": [
+                          {
+                            "name": "A1b3a1a",
+                            "parent": "A1b3a1",
+                            "hide" : true,
+                            "mods" : [1522,13747,14763]
+                          }
+                          ]
+                          }
+                          ]
+                        },
+                        {
+                          "name": "A1b3b",
+                          "parent": "A1b3",
+                          "hide" : true,
+                          "mods" : [7383],
+                          "children": [
+                          {
+                            "name": "A1b3b1",
+                            "parent": "A1b3b",
+                            "hide" : true,
+                            "mods" : [9042,15194]
+                          },
+                          {
+                          "name": "A1b3b2",
+                          "parent": "A1b3b",
+                          "hide" : true,
+                          "mods" : [6683,14534]
+                          }
+                          ]
+                        },
+                        {
+                          "name": "A1b3c",
+                          "parent": "A1b3",
+                          "hide" : true,
+                          "mods" : [1766,4360,7450],
+						  "children":[
+                            {
+                              "name": "A1b3c1",
+                              "parent": "A1b3c",
+                              "hide" : true,
+                              "mods" : [3599]
+                            }
+                           ]
+                        }
+                        ]
+                      },
+                      {
+                        "name": "A1b4",
+                        "parent": "A1b",
+                        "hide" : true,
+                        "mods" : [2758,3259,6338,8836,12404,14180,"15639G"],
+							"children":[
+                            {
+                              "name": "A1b4a",
+                              "parent": "A1b4",
+                              "hide" : true,
+                              "mods" : [4507]
+                            }
+                           ] 
+                      },
+                      {
+                        "name": "A1b5",
+                        "parent": "A1b",
+                        "hide" : true,
+                        "mods" : [2204,7609,10260,11984,14977],
+                        "children": [
+                        {
+                          "name": "A1b5a",
+                          "parent": "A1b5",
+                          "hide" : true,
+                          "mods" : [2951,6371,8119,8585,10377,11828,14912,15652]
+                        }
+                        ]
+                      },
+                      {
+                        "name": "A1b6",
+                        "parent": "A1b",
+                        "hide" : true,
+                        "mods" : [10629,11656,12299],
+                        "children": [
+                        {
+                          "name": "A1b6a",
+                          "parent": "A1b6",
+                          "hide" : true,
+                          "mods" : ["1757A",12110,12886]
+                        }
+                        ]
+                      },
+                      {
+                        "name": "A1b7",
+                        "parent": "A1b7",
+                        "hide" : true,
+                        "mods" : [1645,2298,3358,3599,3749,4769,6068,6377,"9865.1A",10584,11136,15751],
+                        "children": [
+                        {
+                          "name": "A1b7a",
+                          "parent": "A1b",
+                          "hide" : true,
+                          "mods" : [7185,8014],
+						  	"children":[
+                            {
+                              "name": "A1b7a1",
+                              "parent": "A1b7a",
+                              "hide" : true,
+                              "mods" : [15630]
+                            }
+                           ] 
+                        }
+                        ]
+                      }
+                      ]
+                    }
+                  ]
+                  },
+                  {
+                    "name": "A2'3",
+                    "parent": "A1-3",
+                    "hide" : true,
+                    "mods" : ["10354","14383G",15627],
+                    "children" : [
+                    {
+                      "name": "A2",
+                      "parent": "A2'3",
+                      "hide" : true,
+                      "mods" : [1454,5126,8048,8411,13202,13864,14329,14998,15652],
+                      "children" :[
+                      {
+                        "name": "A2a",
+                        "parent": "A2",
+                        "hide" : true,
+                        "mods" : [10780,15665],
+                        "children" : [
+                        {
+                          "name": "A2a1",
+                          "parent": "A2a",
+                          "hide" : true,
+                          "mods" : [9795],
+                          "children" : [
+                          {
+                            "name": "A2a1a",
+                            "parent": "A2a1",
+                            "hide" : true,
+                            "mods" : [15086],
+                            "children" : [
+                            {
+                              "name": "A2a1a1",
+                              "parent": "A2a1a",
+                              "hide" : true,
+                              "mods" : [11673,12584,15625],
+                              "children" : [
+                              {
+                                "name": "A2a1a1a",
+                                "parent": "A2a1a1",
+                                "hide" : true,
+                                "mods" : [15632],
+                                "children" : [
+                                {
+                                  "name": "A2a1a1a1",
+                                  "parent": "A2a1a1a",
+                                  "hide" : true,
+                                  "mods" : [15627]
+                                }
+                                ]
+                              },
+							     {
+                                  "name": "A2a1a1b",
+                                  "parent": "A2a1a1",
+                                  "hide" : true,
+                                  "mods" : [7237]
+                                }
+                              ]
+                            }
+                            ]
+                          },
+                          {
+                            "name": "A2a1b",
+                            "parent": "A2a1",
+                            "hide" : true,
+                            "mods" : [10050],
+                            "children" : [
+                            {
+                              "name": "A2a1b1",
+                              "parent": "A2a1b",
+                              "hide" : true,
+                              "mods" : [15841],
+							      "children" : [
+                            {
+                              "name": "A2a1b1a",
+                              "parent": "A2a1b1",
+                              "hide" : true,
+                              "mods" : [8067]
+							  
+                            },
+							  {
+                              "name": "A2a1b1b",
+                              "parent": "A2a1b1",
+                              "hide" : true,
+                              "mods" : [8200,8212,9804,10319,10959,12389]
+							  
+                            }
+                            ]
+							  
+                            }
+                            ]
+                          }
+                          ]
+                        }
+                        ]
+                      },
+                      {
+                        "name": "A2b",
+                        "parent": "A2",
+                        "hide" : true,
+                        "mods" : [7914],
+                        "children" : [
+                        {
+                          "name": "A2b1",
+                          "parent": "A2b",
+                          "hide" : true,
+                          "mods" : [1830,8511,11746],
+                          "children" : [
+                          {
+                            "name": "A2b1a",
+                            "parent": "A2b1",
+                            "hide" : true,
+                            "mods" : [15627],
+                            "children" : [
+                            {
+                              "name": "A2b1a1",
+                              "parent": "A2b1a",
+                              "hide" : true,
+                              "mods" : [7926,"12545T",14536]
+                            }
+                            ]
+                          }
+                          ]
+                        },
+                        {
+                          "name": "A2b2",
+                          "parent": "A2b",
+                          "hide" : true,
+                          "mods" : [8612,8877,11157,13031,15172,15645],
+						  	"children":[
+                            {
+                              "name": "A2b2a",
+                              "parent": "A2b2",
+                              "hide" : true,
+                              "mods" : [833,"5107A",5549,6854,9357]
+                            }
+                           ]
+                        },
+                        {
+                          "name": "A2b3",
+                          "parent": "A2b",
+                          "hide" : true,
+                          "mods" : [2800,14467],
+                          "children" : [
+                          {
+                            "name": "A2b3a",
+                            "parent": "A2b3",
+                            "hide" : true,
+                            "mods" : [165,947,3106,6236,6407,7727,13427,13459,14425]
+                          },
+						    {
+                            "name": "A2b3b",
+                            "parent": "A2b3",
+                            "hide" : true,
+                            "mods" : [11138]
+                          }
+                          ]
+                        }
+                        ]
+                      }
+                      ]
+                    },
+                    {
+                      "name": "A3",
+                      "parent": "A2'3",
+                      "hide" : true,
+                      "mods" : [2227,2836,3295,5426,"5720T",5897,"6883G",7114,7516,7718,8108,9135,15378,15630],
+                      "children" :[
+                      {
+                        "name": "A3a",
+                        "parent": "A3",
+                        "hide" : true,
+                        "mods" : [8317,11874],
+                        "children" : [
+                        {
+                          "name": "A3a1",
+                          "parent": "A3a",
+                          "hide" : true,
+                          "mods" : [12584,16703]
+                        }
+                        ]
+                      },
+                      {
+                        "name": "A3b",
+                        "parent": "A3",
+                        "hide" : true,
+                        "mods" : [6365],
+                        "children" : [
+                        {
+                          "name": "A3b1",
+                          "parent": "A3b",
+                          "hide" : true,
+                          "mods" : [4936,15628]
+                        }
+                        ]
+                      }
+                      ]
+                    }
+                    ]
+                  }
+                  ]
+                },
+                {
+                  "name": "A4'5",
+                  "parent": "A",
+                  "hide" : true,
+                  "mods" : ["10512"],
+                  "children" : [
+                  {
+                    "name": "A4",
+                    "parent": "A4'5",
+                    "hide" : true,
+                    "mods" : [768,1522,3046,5259,5699,6554,6572,7081,7291,7552,7585,"9865.1A",10281,11227,11229,11260,11372,11828,11846,11892,12831,"13297A","13766T",14537,14728,14788,15086,15781,15807],
+                    "children" : [
+                    {
+                      "name": "A4a",
+                      "parent": "A4",
+                      "hide" : true,
+                      "mods" : [9004,12664,14879,14977,15621]
+                    }
+                    ]
+                  },
+                  {
+                    "name": "A5",
+                    "parent": "A4'5",
+                    "hide" : true,
+                    "mods" : [1134,1196,1830,2190,3238,3662,4132,4198,4537,5432,6653,8946,9756,10360,10863,11768,12545,13322,14356,14500,"15316T",15627,15959],
+                    "children" : [
+                    {
+                      "name": "A5a",
+                      "parent": "A5",
+                      "hide" : true,
+                      "mods" : [5402,8038,11785,16633],
+                      "children" : [
+                      {
+                        "name": "A5a1",
+                        "parent": "A5a",
+                        "hide" : true,
+                        "mods" : [6116,7568,10956,11942,13133,13352,16033]
+                      }
+                      ]
+                    }
+                    ]
+                  }
+                  ]
+                },
+                {
+                  "name": "A6",
+                  "parent": "A",
+                  "hide" : true,
+                  "mods" : ["767","3278","5030","5564","7360","8062","12116","12959","13563","13762","15004","15665","16612"],
+                  "children" : [
+                  {
+                    "name": "A6a",
+                    "parent": "A6",
+                    "hide" : true,
+                    "mods" : [8761,15553,16617]
+                  },
+				    {
+                    "name": "A6b",
+                    "parent": "A6",
+                    "hide" : true,
+                    "mods" : [164,9835]
+                  }
+                  ]
+                }
+              ]},
+              {
+                "name": "BCE",
+                "parent": "ABCE",
+                "hide" : "main_false",
+                "mods" : ["16","381A","1756","8221C","8760","8877","13618","15955","16003"],
+                "children":[
+                  {
+                    "name": "BE",
+                    "parent": "BCE",
+                    "hide" : "main_false",
+                    "mods" : ["2812","4277","4390","8569","8736","8817","10440","12665","14671","15632","15652"],
+                    "children":[
+                      {
+                        "name": "B",
+                        "parent": "BE",
+                        "hide" : "main_false",
+                        "mods" : [2185,4204,6764,11948,13594,15595,15612,"15639G",15643,15815],
+                        "children" : [
+                        {
+                          "name": "B1",
+                          "parent": "B",
+                          "hide" : true,
+                          "mods" : [445,4646,9219,9825,10257,10542,14608,14930],
+                          "children" : [
+                          {
+                            "name": "B1a",
+                            "parent": "B1",
+                            "hide" : true,
+                            "mods" : ["3028C",8101,11176],
+                            "children" : [
+                            {
+                              "name": "B1a1",
+                              "parent": "B1a",
+                              "hide" : true,
+                              "mods" : [7014],
+                              "children" : [
+                              {
+                                "name": "B1a1a",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [10773],
+                                "children" : [
+                                {
+                                  "name": "B1a1a1",
+                                  "parent": "B1a1a",
+                                  "hide" : true,
+                                  "mods" : [12102]
+                                },
+                                {
+                                  "name": "B1a1a2",
+                                  "parent": "B1a1a",
+                                  "hide" : true,
+                                  "mods" : ["4517!"]
+                                }
+                                ]
+                              },
+                              {
+                                "name": "B1a1b",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [10557,13426],
+                                "children" : [
+                                {
+                                  "name": "B1a1b1",
+                                  "parent": "B1a1b",
+                                  "hide" : true,
+                                  "mods" : [13778,15628]
+                                }
+                                ]
+                              },
+                              {
+                                "name": "B1a1c",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [4880,"9028C"]
+                              },
+                              {
+                                "name": "B1a1d",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [4466]
+                              },
+                              {
+                                "name": "B1a1e",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [14543],
+									"children":[
+                            {
+                              "name": "B1a1e1",
+                              "parent": "B1a1e",
+                              "hide" : true,
+                              "mods" : [4333,9198,9420]
+                            }
+                           ]
+                              },
+                              {
+                                "name": "B1a1f",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [9252,15595],
+                                "children":[
+                                {
+                                  "name": "B1a1f1",
+                                  "parent": "B1a1f",
+                                  "hide" : true,
+                                  "mods" : [12459],
+                                  "children" : [
+                                  {
+                                    "name": "B1a1f1a",
+                                    "parent": "B1a1f1",
+                                    "hide" : true,
+                                    "mods" : ["2679.1G!","9914.1GT!"]
+								  },{
+									"name": "B1a1f1b",
+                                    "parent": "B1a1f1",
+                                    "hide" : true,
+                                    "mods" : ["15464.1C"],
+                                    "children" : [
+                                    {
+                                      "name": "B1a1f1b1",
+                                      "parent": "B1a1f1b",
+                                      "hide" : true,
+                                      "mods" : ["9252!"]
+                                    },{
+                                      "name": "B1a1f1b2",
+                                      "parent": "B1a1f1b",
+                                      "hide" : true,
+                                      "mods" : ["11121T","15959"]
+                                    }
+                                    ]
+                                  }
+                                  ]
+                                }
+                                ]
+                              },
+                              {
+                                "name": "B1a1g",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [14800],
+								"children" : [
+									{
+										"name": "B1a1g1",
+										"parent": "B1a1g",
+										"hide" : true,
+										"mods" : [12260]
+									}
+								]
+                              },
+                              {
+                                "name": "B1a1h",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [5906],
+                                "children":[
+                                {
+                                 "name": "B1a1h1",
+                                  "parent": "B1a1h",
+                                  "hide" : true,
+                                  "mods" : [4246]
+                                }
+                                ]
+                              },
+                              {
+                                "name": "B1a1i",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [2463]
+                              },
+                              {
+                                "name": "B1a1j",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [8303]
+                              },
+                              {
+                                "name": "B1a1k",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [3247],
+                                "children":[
+                                {
+                                 "name": "B1a1k1",
+                                  "parent": "B1a1k",
+                                  "hide" : true,
+                                  "mods" : ["15931delA"]
+                                },
+								   {
+                                 "name": "B1a1k2",
+                                  "parent": "B1a1k",
+                                  "hide" : true,
+                                  "mods" : [6500]
+                                }
+                                ]
+                              },
+                              {
+                                "name": "B1a1l",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [16003]
+                              },
+                              {
+                                "name": "B1a1m",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : ["15931delA"]
+                              },
+                              {
+                                "name": "B1a1n",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [4949,8697,10899],
+									"children":[
+                            {
+                              "name": "B1a1n1",
+                              "parent": "B1a1n",
+                              "hide" : true,
+                              "mods" : [15651]
+                            }
+                           ]
+                              },
+                              {
+                                "name": "B1a1o",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [15083,15375]
+                              },
+                              {
+                                "name": "B1a1p",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [13322]
+                              },
+							    {
+                                "name": "B1a1r",
+                                "parent": "B1a1",
+                                "hide" : true,
+                                "mods" : [5720]
+                              }
+                              ]
+                            },
+                            {
+                              "name": "B1a2",
+                              "parent": "B1a",
+                              "hide" : true,
+                              "mods" : ["1076A",3388,"7015.1G",9252,15338,15595]
+                            }
+                            ]
+                          }
+                          ]
+                        },
+                        {
+                          "name": "B2",
+                          "parent": "B",
+                          "hide" : true,
+                          "mods" : [374],
+                          "children" : [
+                          {
+                            "name": "B2a",
+                            "parent": "B2",
+                            "hide" : true,
+                            "mods" : [3220,13331,16038],
+                            "children" : [
+                            {
+                              "name": "B2a1",
+                              "parent": "B2a",
+                              "hide" : true,
+                              "mods" : [4940]
+                            },
+                            {
+                              "name": "B2a2",
+                              "parent": "B2a",
+                              "hide" : true,
+                              "mods" : [7914,8476,13818,14750,15643]
+                            },
+                            {
+                              "name": "B2a3",
+                              "parent": "B2a",
+                              "hide" : true,
+                              "mods" : [10317,10319,"13130A",15553,15626]
+                            }
+                            ]
+                          },
+						  {
+                            "name": "B2b",
+                            "parent": "B2",
+                            "hide" : true,
+                            "mods" : ["3358", "5366", "6529", "11768", "15822"]
+						  }
+                          ]
+                        }
+                        ]
+                      },
+                      {
+                        "name": "E",
+                        "parent": "BE",
+                        "hide" : "main_false",
+                        "mods" : [933,"1691.1C",3539,3758,5891,6170,6854,9810,9928,11526,12577,12902,12906,13102,15229,15553,15811,"6192G","13102A","15639A"]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "C",
+                    "parent": "BCE",
+                    "hide" : "main_false",
+                    "mods" : [557,1204,1748,4234,4503,5624,7058,9222,9708,"9865.1A",10776,11322,11400,"11572C",12272,12330,12636,14647,14692,15185,15508,15611,15650,"15639G"],
+					"children":[
+					{
+						"name": "C1",
+						"parent": "C",
+						"hide" : true,
+						"mods" : [1709,10785,12122],
+						"children" : [
+						{
+						  "name": "C1a",
+						  "parent": "C1",
+						  "hide" : true,
+						  "mods" : [7112,"7186A",11839,13112,16705],
+						  "children" : [
+						  {
+							"name": "C1a1",
+							"parent": "C1a",
+							"hide" : true,
+							"mods" : [1046, 10863],
+							"children" : [
+							{
+							  "name": "C1a1a",
+							  "parent": "C1a1",
+							  "hide" : true,
+							  "mods" : [7363,15621],
+							  "children" : [
+							  {
+								"name": "C1a1a1",
+								"parent": "C1a1a",
+								"hide" : true,
+								"mods" : [11100]
+							  }
+							  ]
+							},
+							{
+							  "name": "C1a1b",
+							  "parent": "C1a1",
+							  "hide" : true,
+							  "mods" : [11431],
+							  "children" : [
+							  {
+								"name": "C1a1b1",
+								"parent": "C1a1b",
+								"hide" : true,
+								"mods" : ["15931delA"],
+								"children" : [
+								{
+								  "name": "C1a1b1a",
+								  "parent": "C1a1b1",
+								  "hide" : true,
+								  "mods" : [7112]
+								}
+								]
+							  }
+							  ]
+							},
+							{
+							  "name": "C1a1c",
+							  "parent": "C1a1",
+							  "hide" : true,
+							  "mods" : [1392,4503,15814],
+										"children":[
+								{
+								  "name": "C1a1c1",
+								  "parent": "C1a1c",
+								  "hide" : true,
+								  "mods" : ["7862A","15639A"]
+								}
+							   ] 
+							},
+							{
+							  "name": "C1a1d",
+							  "parent": "C1a1",
+							  "hide" : true,
+							  "mods" : [3181]
+							},
+							  {
+							  "name": "C1a1e",
+							  "parent": "C1a1",
+							  "hide" : true,
+							  "mods" : [7844]
+							}
+							]
+						  },
+						  {
+							"name": "C1a2",
+							"parent": "C1a",
+							"hide" : true,
+							"mods" : [9375],
+							"children" : [
+							{
+							  "name": "C1a2a",
+							  "parent": "C1a2",
+							  "hide" : true,
+							  "mods" : ["15639A"],
+							  "children" : [
+							  {
+								"name": "C1a2a1",
+								"parent": "C1a2a",
+								"hide" : true,
+								"mods" : [3931,16003]
+							  }]
+							},
+							{
+							  "name": "C1a2b",
+							  "parent": "C1a2",
+							  "hide" : true,
+							  "mods" : [3301],
+							  "children" : [
+							  {
+								"name": "C1a2b1",
+								"parent": "C1a2b",
+								"hide" : true,
+								"mods" : [13506]
+							  }
+							  ]
+							}
+							]
+						  }
+						  ]
+						},
+						{
+						  "name": "C1b",
+						  "parent": "C1",
+						  "hide" : true,
+						  "mods" : [3494,6740,6863,11247,11959,"12346A",13791,15372,15710],
+						  "children" : [
+						  {
+							"name": "C1b1",
+							"parent": "C1b",
+							"hide" : true,
+							"mods" : ["6711A"],
+							"children" : [
+							{
+							  "name": "C1b1a",
+							  "parent": "C1b1",
+							  "hide" : true,
+							  "mods" : [607,10263,11998,13319],
+							  "children" : [
+							  {
+								"name": "C1b1a1",
+								"parent": "C1b1a",
+								"hide" : true,
+								"mods" : [6743]
+							  }
+							  ]
+							},
+							{
+							  "name": "C1b1b",
+							  "parent": "C1b1",
+							  "hide" : true,
+							  "mods" : [9835,12413],
+							  "children" : [
+							  {
+								"name": "C1b1b1",
+								"parent": "C1b1b",
+								"hide" : true,
+								"mods" : [4348]
+							  }
+							  ]
+							},
+							{
+							  "name": "C1b1c",
+							  "parent": "C1b1",
+							  "hide" : true,
+							  "mods" : [3406]
+							},
+							{
+							  "name": "C1b1d",
+							  "parent": "C1b1",
+							  "hide" : true,
+							  "mods" : [14427]
+							},
+							{
+							  "name": "C1b1e",
+							  "parent": "C1b1",
+							  "hide" : true,
+							  "mods" : [3634,8260]
+							},
+							  {
+							  "name": "C1b1f",
+							  "parent": "C1b1",
+							  "hide" : true,
+							  "mods" : [13426]
+							},
+							  {
+							  "name": "C1b1g",
+							  "parent": "C1b1",
+							  "hide" : true,
+							  "mods" : [15553]
+							}
+							]
+						  },
+							 {
+							"name": "C1b2",
+							"parent": "C1b",
+							"hide" : true,
+							"mods" : [9375]
+							}
+						  ]
+						}
+						]
+					},
+					{
+						"name": "C2",
+						"parent": "C",
+						"hide" : true,
+						"mods" : [1939,10386,"10959C",11079,11088,11347,12098,12102,15031,15526,15553]
+					}
+					]
+				  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "F",
+            "parent": "ABCEF",
+            "hide" : "main_false",
+            "mods" : ["2730","3346","4138","4400","4766","5828","6440","6461","7732","7923","8212","8473","9219","9514","9795","10701","10990","11457","11461","11861","11948T","12062","12110","12695","12740","12829","12857","13241","13630","13789","14341","15225","15310","15490","15611","15627","15628","15639A","15652"]
+          }
+        ]
+      },
+      {
+        "name": "D",
+        "parent": "COY",
+        "hide" : "main_false",
+        "mods" : ["162","3034","3465","3937","3950","4484","5519","5937","6092","6860","8760","8782","8853","8970","10159","10195","10311","10346","10725","11800","11984","13594","15632","15636","15815","15848","15931delA","15959","16003"],
+        "children":[
+        {
+          "name": "D1",
+          "parent": "D",
+          "hide" : true,
+          "mods" : ["353T",2196,3826,6767,6881,8108,10463,10671,12551,12603,13909,13948,14470,14504,14806,15287,"15639A",16039,16553],
+          "children":[
+          {
+            "name": "D1a",
+            "parent": "D",
+            "hide" : true,
+            "mods" : [125,4537,4946,11975,12206,12410,15630,15955]
+          }
+          ]
+        },
+        {
+          "name": "D2",
+          "parent": "D",
+          "hide" : true,
+          "mods" : [658,1873,4466,6053,9835,9886,10060,10680,12818,12968,14647,15634,15643,"15639G"],
+          "children" : [
+          {
+            "name": "D2a",
+            "parent": "D2",
+            "hide" : true,
+            "mods" : [2656],
+            "children" : [
+            {
+              "name": "D2a1",
+              "parent": "D2a",
+              "hide" : true,
+              "mods" : [15635]
+            }
+            ]
+          }
+          ]
+        }
+        ]
+      }
+    ]
+  }
+]
