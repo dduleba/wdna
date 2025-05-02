@@ -24,13 +24,63 @@ var svg = d3.select("body").append("svg")
   .append("g")
  .attr("transform", "translate(" + width*5/6 + "," + margin.top + ")");
 
-d3.json("data/tree.json", function(error, json_tree) {
-  if (error){
-    console.log(error);
+// Store sequences data globally
+var sequences_data = [];
+
+// Load both JSON files
+d3.json("data/sequences.json", function(error, json_sequences) {
+  if (error) {
+    console.log("Error loading sequences data:", error);
+    return;
   }
-  root=json_tree[0]
-  init_root(json_tree[0], width); 
+  
+  sequences_data = json_sequences;
+  
+  // After loading sequences, load tree data
+  d3.json("data/tree.json", function(error, json_tree) {
+    if (error) {
+      console.log("Error loading tree data:", error);
+      return;
+    }
+    
+    root = json_tree[0];
+    // Augment tree nodes with sequence information
+    augmentTreeWithSequences(root);
+    init_root(json_tree[0], width);
+  });
 });
+
+// Function to augment tree nodes with sequence information
+function augmentTreeWithSequences(node) {
+  if (!node) return;
+  
+  // Add breeds info to this node
+  node.breeds = [];
+  
+  // Find sequences that match this haplogroup
+  if (node.name) {
+    var nodeName = node.name.replace('*', ''); // Remove asterisk if present
+    sequences_data.forEach(function(seq) {
+      if (seq.Haplogroup && seq.Haplogroup.startsWith(nodeName)) {
+        if (seq["Breed of dog"] && node.breeds.indexOf(seq["Breed of dog"]) === -1) {
+          node.breeds.push(seq["Breed of dog"]);
+          
+          // Add breed to mods array with a special prefix to identify it as a breed
+          if (!node.mods) node.mods = [];
+          node.mods.push("BREED:" + seq["Breed of dog"]);
+        }
+      }
+    });
+  }
+  
+  // Recursively process children
+  if (node.children) {
+    node.children.forEach(augmentTreeWithSequences);
+  }
+  if (node._children) {
+    node._children.forEach(augmentTreeWithSequences);
+  }
+}
 
 function update(source) {
   // Compute the new tree layout.
@@ -64,14 +114,27 @@ function update(source) {
       })
       .each(function(d){
         if (d.mods && d.mods.length * ymodsize > 2*ydep){
-          for (var i=Math.floor((2*d.mods.length)/3); i<d.mods.length; i++){
+          start_i = Math.floor((2*d.mods.length)/3);
+          end_i = Math.min(start_i + 20, d.mods.length);
+          for (var i=start_i; i<end_i; i++){
+            var mod = d.mods[i];
+            var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
+            
+            // Truncate breed names to 9 characters without adding "..."
+            var displayText = mod;
+            if (isBreed) {
+              var breedName = mod.substring(6);
+              displayText = breedName.length > 9 ? breedName.substring(0, 9) : breedName;
+            }
+            
             d3.select(this)
               .append("tspan")
               .attr("dy", ymodsize)
               .attr("x", 70)
               .attr("font-size", ymodsize)
               .attr("text-anchor", "start")
-              .text(d.mods[i])
+              .attr("fill", isBreed ? "blue" : "black")
+              .text(isBreed ? displayText : mod);
           }
         }
       })
@@ -93,20 +156,30 @@ function update(source) {
         if (d.mods && d.mods.length * ymodsize > ydep){
           if (d.mods && d.mods.length * ymodsize > 2*ydep){
             start_i = Math.floor(d.mods.length/3);
-            end_i = Math.floor((2*d.mods.length)/3);
+            end_i = Math.min(start_i + 20, Math.floor((2*d.mods.length)/3));
           }else{
             start_i = Math.floor(d.mods.length/2);
-            end_i = d.mods.length;
+            end_i = Math.min(start_i + 20, d.mods.length);
           }
           for (var i=start_i; i<end_i; i++){
+            var mod = d.mods[i];
+            var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
+            
+            // Truncate breed names to 9 characters without adding "..."
+            var displayText = mod;
+            if (isBreed) {
+              var breedName = mod.substring(6);
+              displayText = breedName.length > 9 ? breedName.substring(0, 9) : breedName;
+            }
+            
             d3.select(this)
               .append("tspan")
               .attr("dy", ymodsize)
               .attr("x", 35)
               .attr("font-size", ymodsize)
-              //.attr("text-anchor", "middle")
               .attr("text-anchor", "start")
-              .text(d.mods[i])
+              .attr("fill", isBreed ? "blue" : "black")
+              .text(isBreed ? displayText : mod);
           }
         }
       })
@@ -131,25 +204,43 @@ function update(source) {
           
           if(d.mods.length * ymodsize > ydep){
             if ( d.mods.length * ymodsize > 2*ydep){
-              max_element = Math.floor((d.mods.length)/3);
+              max_element = Math.min(20, Math.floor((d.mods.length)/3));
             }else{
-              max_element = Math.floor(d.mods.length/2);
+              max_element = Math.min(20, Math.floor(d.mods.length/2));
             }
           }else{
-            max_element = d.mods.length
+            max_element = Math.min(20, d.mods.length);
           }
           for (var i=0; i<max_element; i++){
+            var mod = d.mods[i];
+            var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
+            
+            // Truncate breed names to 9 characters without adding "..."
+            var displayText = mod;
+            if (isBreed) {
+              var breedName = mod.substring(6);
+              displayText = breedName.length > 9 ? breedName.substring(0, 9) : breedName;
+            }
+            
             d3.select(this)
               .append("tspan")
               .attr("dy", ymodsize)
               .attr("x", 0)
               .attr("font-size", ymodsize)
-              //.attr("text-anchor", "middle")
               .attr("text-anchor", "start")
-              .text(d.mods[i])
+              .attr("fill", isBreed ? "blue" : "black")
+              .text(isBreed ? displayText : mod);
           }
         }
       })
+      
+  // Add breeds display in a simpler way - just one column with limit
+  nodeEnter.append("text")
+      .attr("class", "breeds-text")
+      .attr("y", 0)
+      .attr("x", 0)
+      .style("fill-opacity", 0);  // Hide this element
+
 // Transition nodes to their new position.
   var nodeUpdate = node.transition()
       .duration(duration)
@@ -174,6 +265,9 @@ function update(source) {
       .style("stroke",function(d) { return d.children || d._children  ? "green":"red"});
   nodeUpdate.select("text")
       .style("fill-opacity", 1);
+  // Make sure breeds text transitions properly
+  nodeUpdate.select(".breeds-text")
+      .style("fill-opacity", 1);
   // Transition exiting nodes to the parent's new position.
   var nodeExit = node.exit().transition()
       .duration(duration)
@@ -182,6 +276,8 @@ function update(source) {
   nodeExit.select("circle")
       .attr("r", 1e-6);
   nodeExit.select("text")
+      .style("fill-opacity", 1e-6);
+  nodeExit.select(".breeds-text")
       .style("fill-opacity", 1e-6);
   // Update the links…
   var link = svg.selectAll("path.link")
@@ -258,8 +354,6 @@ function show(d, xall){
     }
   } else{
     if (d._children){
-      //if(!d.children){
-      //}
       d._children.forEach(function(x){
         if(d.children && d.children.indexOf(x)>-1){
           if(x.children && xall==true){

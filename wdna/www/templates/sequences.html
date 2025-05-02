@@ -22,7 +22,7 @@
             var grid = $("#sequences");
         
             grid.jqGrid({
-                    url: "{{ url_for('wdna.static', filename='data.json') }}",
+                    url: "{{ url_for('wdna.static', filename='data/sequences.json') }}",
                     datatype: "json",
                     loadonce: true,
                 colModel: [
