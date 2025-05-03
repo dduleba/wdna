@@ -80,12 +80,52 @@ function augmentTreeWithSequences(node) {
   // Add breeds info to this node
   node.breeds = [];
   
-  // Find sequences that match this haplogroup
+  // First, process children to ensure breeds are assigned to the most specific nodes first
+  if (node.children) {
+    node.children.forEach(augmentTreeWithSequences);
+  }
+  if (node._children) {
+    node._children.forEach(augmentTreeWithSequences);
+  }
+  
+  // Find sequences that match this haplogroup exactly
   if (node.name) {
     var nodeName = node.name.replace('*', ''); // Remove asterisk if present
+    
+    // Get all child haplogroup names to exclude breeds already assigned to more specific nodes
+    var childHaplogroups = [];
+    function collectChildHaplogroups(n) {
+      if (n.name) {
+        childHaplogroups.push(n.name.replace('*', ''));
+      }
+      if (n.children) {
+        n.children.forEach(collectChildHaplogroups);
+      }
+      if (n._children) {
+        n._children.forEach(collectChildHaplogroups);
+      }
+    }
+    
+    if (node.children) {
+      node.children.forEach(collectChildHaplogroups);
+    }
+    if (node._children) {
+      node._children.forEach(collectChildHaplogroups);
+    }
+    
     sequences_data.forEach(function(seq) {
-      if (seq.Haplogroup && seq.Haplogroup.startsWith(nodeName)) {
-        if (seq["Breed of dog"] && node.breeds.indexOf(seq["Breed of dog"]) === -1) {
+      if (seq.Haplogroup) {
+        var haplogroup = seq.Haplogroup;
+        
+        // Only add breeds that match this exact node and aren't more specific to a child node
+        var isExactMatch = haplogroup === nodeName;
+        var isMostSpecific = isExactMatch || 
+          (haplogroup.startsWith(nodeName) && 
+           !childHaplogroups.some(function(childHaplo) {
+             return haplogroup.startsWith(childHaplo);
+           }));
+        
+        if (isMostSpecific && seq["Breed of dog"] && node.breeds.indexOf(seq["Breed of dog"]) === -1) {
           node.breeds.push(seq["Breed of dog"]);
           
           // Add breed to mods array with a special prefix to identify it as a breed
@@ -94,14 +134,6 @@ function augmentTreeWithSequences(node) {
         }
       }
     });
-  }
-  
-  // Recursively process children
-  if (node.children) {
-    node.children.forEach(augmentTreeWithSequences);
-  }
-  if (node._children) {
-    node._children.forEach(augmentTreeWithSequences);
   }
 }
 
