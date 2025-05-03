@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0047)https://clf-mtdna-tree.cm.umk.pl/sequences.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Database of Canis lupus familiaris mtDNA sequences</title>
+    
+    <meta name="author" content="Dariusz Duleba">
+    
+    <!-- table css -->
+    <link rel="stylesheet" type="text/css" href="js/jquery-ui-1.11.1.redmond/jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="js/jquery/css/ui.jqgrid.css" />
+    
+    <!-- tree css -->
+    <link rel="stylesheet" type="text/css" media="screen" href="data/layout.css">
+    <style>
+        .node circle {
+          fill: #fff;
+          stroke: steelblue;
+          stroke-width: 3px;
+        }
+        .node text { font: 12px sans-serif; }
+        .node {
+         cursor: pointer;
+        }
+        .link {
+          fill: none;
+          stroke: #ccc;
+          stroke-width: 2px;
+        }
+        #tree-container {
+          margin-top: 30px;
+          width: 100%;
+          overflow-x: auto;
+          overflow-y: hidden;
+          position: relative;
+        }
+        #table-container {
+          margin-bottom: 20px;
+        }
+       </style>
+       
+    
+    <!-- table -->
+    <script type="text/javascript" src="js/jquery/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.11.1.redmond/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/jquery/i18n/grid.locale-en.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="js/seq.js"></script>
+    <script src="js/d3.min.js"></script>
+    <script type="text/javascript">
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+    
+        $(document).ready(function () {
+            init_seq();
+            // Inject modified draw.js functionality
+            // initializeTree();
+        });
+        
+        // Function to initialize the tree
+        // function initializeTree() {
+        //     // Load the draw.js script which will now use #tree-container instead of body
+        //     $.getScript("js/draw.js");
+        // }
+    </script>
+
+
+
+</head>
+<body>
+    <div id="table-container">
+        <table id="sequences"><tr><td/></tr></table>
+        <div id="sequencePager"></div>
+    </div>
+
+    <div id="menu">
+        <a id="displayText" href="javascript:toggle();">show legend</a>
+        <div id="toggleText" style="display: none">
+        <p>
+        Simplified phylogenethic mtDNA tree of <i>Canis lupus familiaris</i>. The schematic tree is based on the complete mitochondrial genomes phylogenetic tree linked to: mtDNA Canis lupus familiaris tree
+        </p>
+        <img src="data/green_green.png" width=13px height=13px>    Haplogroup containing subhaplogroups (show subhaplogroups after click)<br>
+        <img src="data/green_white.png" width=13px height=13px>    Haplogroup containing subhaplogroups (hide subhaplogroups after click)<br>
+        <img src="data/red.png" width=13px height=13px>    Terminal subhaplogroups<br>
+        * - Kim reference sequence
+        </div>
+    </div>
+    
+    <div id="tree-container"></div>
+    <!-- <script src="js/d3.min.js"></script> -->
+    <script src="js/draw.js"></script>
+</body>
+</html>

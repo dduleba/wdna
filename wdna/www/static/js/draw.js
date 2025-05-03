@@ -1,9 +1,32 @@
+function toggle() {
+	var ele = document.getElementById("toggleText");
+	var text = document.getElementById("displayText");
+	if(ele.style.display == "block") {
+    		ele.style.display = "none";
+		text.innerHTML = "show legend";
+  	}
+	else {
+		ele.style.display = "block";
+		text.innerHTML = "hide legend";
+	}
+} 
+
+
 function init_root(root, width){
   root.x0 = 0;
   root.y0 = 0;
   hide(root, 'KIM');
   update(root);
-  window.scrollTo(width*5/6-window.innerWidth/2,0);
+  
+  // Scroll the tree container instead of the window
+  var treeContainer = document.getElementById("tree-container");
+  var scrollPosition = width*5/6 - window.innerWidth/2;
+  if (treeContainer) {
+    // Delay the scroll operation to ensure the SVG is fully rendered
+    setTimeout(function() {
+      treeContainer.scrollLeft = scrollPosition;
+    }, 100);
+  }
 }
 
 // ************** Generate the tree diagram  *****************
@@ -18,7 +41,7 @@ var tree = d3.layout.tree()
     .nodeSize([75,50])
 var diagonal = d3.svg.diagonal()
  .projection(function(d) { return [d.x, d.y]; });
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#tree-container").append("svg")
  .attr("width", width + margin.right + margin.left)
  .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -27,7 +50,7 @@ var svg = d3.select("body").append("svg")
 // Store sequences data globally
 var sequences_data = [];
 
-// Load both JSON files
+// // Load both JSON files
 d3.json("data/sequences.json", function(error, json_sequences) {
   if (error) {
     console.log("Error loading sequences data:", error);
