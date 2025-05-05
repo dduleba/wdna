@@ -15,7 +15,7 @@ function toggle() {
 function init_root(root, width){
   root.x0 = 0;
   root.y0 = 0;
-  hide(root, 'KIM');
+  expandAll(root);
   update(root);
   
   // Scroll the tree container instead of the window
@@ -522,4 +522,15 @@ function _click(d) {
 function click(d){
   _click(d);
   update(d);
+}
+
+// Add new function to expand all nodes
+function expandAll(node) {
+  if (node._children) {
+    node.children = node._children;
+    node._children = null;
+    node.children.forEach(expandAll);
+  } else if (node.children) {
+    node.children.forEach(expandAll);
+  }
 }
