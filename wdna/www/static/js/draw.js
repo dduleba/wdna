@@ -31,7 +31,7 @@ function init_root(root, width){
 
 // ************** Generate the tree diagram  *****************
 var margin = {top: 20, right: 0, bottom: 20, left: 20},
- width = 7000 - margin.right - margin.left,
+ width = 11000 - margin.right - margin.left,
  height = 1900 - margin.top - margin.bottom,
  ydep = 150,
  ymodsize = 8;
@@ -57,28 +57,35 @@ function loadTreeData() {
   
   // Get data from jqGrid
   var grid = $("#sequences");
-  
-  // Get current grid data which respects filters
   sequences_data = [];
-  
-  // Get all rows including filtered ones
-  var gridData = grid.jqGrid('getGridParam', 'data');
   
   // Get current filter settings
   var postData = grid.jqGrid('getGridParam', 'postData');
   var filters = postData.filters ? JSON.parse(postData.filters) : null;
   
+  // Function to get filtered data
+  function getFilteredData() {
+    // Get the current filtered IDs
+    var filteredIds = grid.jqGrid('getDataIDs');
+    var data = [];
+    
+    // Get data only for filtered rows
+    filteredIds.forEach(function(id) {
+      var rowData = grid.jqGrid('getLocalRow', id);
+      if (rowData) {
+        data.push(rowData);
+      }
+    });
+    
+    return data;
+  }
+  
   if (filters && filters.rules && filters.rules.length > 0) {
-    // If there are filters, we need to apply them manually to the data
-    // For simplicity, we'll use jqGrid's internal filtered data
-    var ids = grid.jqGrid('getDataIDs');
-    for (var i = 0; i < ids.length; i++) {
-      var rowData = grid.jqGrid('getRowData', ids[i]);
-      sequences_data.push(rowData);
-    }
+    // If there are filters, get only the filtered data
+    sequences_data = getFilteredData();
   } else {
-    // No filters, use all data
-    sequences_data = gridData;
+    // No filters, use all data from the grid
+    sequences_data = grid.jqGrid('getGridParam', 'data');
   }
   
   console.log("Tree using " + sequences_data.length + " sequences");
@@ -153,7 +160,8 @@ function augmentTreeWithSequences(node) {
              return haplogroup.startsWith(childHaplo);
            }));
         
-        if (isMostSpecific && seq["Breed of dog"] && node.breeds.indexOf(seq["Breed of dog"]) === -1) {
+        if (isMostSpecific && seq["Breed of dog"]) {
+          // Always add the breed, even if it's already in the list
           node.breeds.push(seq["Breed of dog"]);
           
           // Add breed to mods array with a special prefix to identify it as a breed
