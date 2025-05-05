@@ -52,6 +52,33 @@
     
         $(document).ready(function () {
             init_seq();
+            
+            // Add handler for jqGrid loadComplete event to update the tree
+            $("#sequences").on('jqGridLoadComplete', function() {
+                // Load tree data from jqGrid after the grid is completely loaded
+                loadTreeData();
+            });
+            
+            // To handle data changes in the grid, add a handler for the filter toolbar
+            $("#sequences").on('jqGridToolbarFilterClicked', function() {
+                // When filter is applied, wait for the grid to update then reload tree
+                setTimeout(function() {
+                    loadTreeData();
+                }, 500);
+            });
+            
+            // Also reload tree after paging or sorting
+            $("#sequences").on('jqGridSortCol', function() {
+                setTimeout(function() {
+                    loadTreeData();
+                }, 500);
+            });
+            
+            $("#sequences").on('jqGridAfterLoadComplete', function() {
+                loadTreeData();
+            });
+            
+            // Original commented code
             // Inject modified draw.js functionality
             // initializeTree();
         });
@@ -70,6 +97,7 @@
     <div id="table-container">
         <table id="sequences"><tr><td/></tr></table>
         <div id="sequencePager"></div>
+        <div id="tree-update-status" style="margin-top: 10px; color: #666;">Tree is displayed based on the sequence data in the table. Filter or sort the table to update the tree visualization.</div>
     </div>
 
     <div id="menu">

@@ -31,10 +31,27 @@ function init_seq(){
             viewrecords: true,
             caption: "Database of Canis lupus familiaris mtDNA sequences",
             height: "auto",
-            ignoreCase: true
+            ignoreCase: true,
+            loadComplete: function() {
+                $(this).trigger('jqGridLoadComplete');
+            },
+            afterFilterSearch: function() {
+                $(this).trigger('jqGridToolbarFilterClicked');
+            }
         });
         grid.jqGrid('navGrid', '#sequencePager',
             { add: false, edit: false, del: false }, {}, {}, {},
             { multipleSearch: true, multipleGroup: true });
-        grid.jqGrid('filterToolbar', { defaultSearch: 'cn', stringResult: true, searchOnEnter: false });
+        grid.jqGrid('filterToolbar', { 
+            defaultSearch: 'cn', 
+            stringResult: true, 
+            searchOnEnter: false,
+            afterSearch: function() {
+                grid.trigger('jqGridToolbarFilterClicked');
+            }
+        });
+
+        grid.on('jqGridAfterGridComplete', function() {
+            $(this).trigger('jqGridAfterLoadComplete');
+        });
 }

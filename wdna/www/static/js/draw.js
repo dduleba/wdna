@@ -50,19 +50,44 @@ var svg = d3.select("#tree-container").append("svg")
 // Store sequences data globally
 var sequences_data = [];
 
-// // Load both JSON files
-d3.json("data/sequences.json", function(error, json_sequences) {
-  if (error) {
-    console.log("Error loading sequences data:", error);
-    return;
+// Instead of loading sequences.json, we'll get data from jqGrid
+function loadTreeData() {
+  // Update status message
+  $("#tree-update-status").text("Updating tree visualization...");
+  
+  // Get data from jqGrid
+  var grid = $("#sequences");
+  
+  // Get current grid data which respects filters
+  sequences_data = [];
+  
+  // Get all rows including filtered ones
+  var gridData = grid.jqGrid('getGridParam', 'data');
+  
+  // Get current filter settings
+  var postData = grid.jqGrid('getGridParam', 'postData');
+  var filters = postData.filters ? JSON.parse(postData.filters) : null;
+  
+  if (filters && filters.rules && filters.rules.length > 0) {
+    // If there are filters, we need to apply them manually to the data
+    // For simplicity, we'll use jqGrid's internal filtered data
+    var ids = grid.jqGrid('getDataIDs');
+    for (var i = 0; i < ids.length; i++) {
+      var rowData = grid.jqGrid('getRowData', ids[i]);
+      sequences_data.push(rowData);
+    }
+  } else {
+    // No filters, use all data
+    sequences_data = gridData;
   }
   
-  sequences_data = json_sequences;
+  console.log("Tree using " + sequences_data.length + " sequences");
   
-  // After loading sequences, load tree data
+  // After getting sequences, load tree data
   d3.json("data/tree.json", function(error, json_tree) {
     if (error) {
       console.log("Error loading tree data:", error);
+      $("#tree-update-status").text("Error loading tree data: " + error);
       return;
     }
     
@@ -70,8 +95,11 @@ d3.json("data/sequences.json", function(error, json_sequences) {
     // Augment tree nodes with sequence information
     augmentTreeWithSequences(root);
     init_root(json_tree[0], width);
+    
+    // Update status message after tree is loaded
+    $("#tree-update-status").text("Tree updated with " + sequences_data.length + " sequences. Filter or sort the table to update the tree visualization.");
   });
-});
+}
 
 // Function to augment tree nodes with sequence information
 function augmentTreeWithSequences(node) {
@@ -134,10 +162,52 @@ function augmentTreeWithSequences(node) {
         }
       }
     });
+    
+    // Mark nodes for removal if they have no breeds
+    // For leaf nodes (no children)
+    if (!node.children && !node._children && node.breeds.length === 0) {
+      node.remove = true;
+    }
+    
+    // For internal nodes, check if they have any valid children or breeds
+    function hasValidChildren(n) {
+      if (!n) return false;
+      if (n.children) {
+        return n.children.some(function(child) { return !child.remove; });
+      }
+      if (n._children) {
+        return n._children.some(function(child) { return !child.remove; });
+      }
+      return false;
+    }
+    
+    if (!node.breeds.length && !hasValidChildren(node)) {
+      node.remove = true;
+    }
   }
 }
 
 function update(source) {
+  // Filter out removed nodes before computing layout
+  function filterRemovedNodes(node) {
+    if (!node) return null;
+    
+    // Filter children arrays if they exist
+    if (node.children) {
+      node.children = node.children.filter(function(child) { return !child.remove; });
+      node.children.forEach(filterRemovedNodes);
+    }
+    if (node._children) {
+      node._children = node._children.filter(function(child) { return !child.remove; });
+      node._children.forEach(filterRemovedNodes);
+    }
+    
+    return node;
+  }
+  
+  // Apply filter before computing layout
+  filterRemovedNodes(root);
+  
   // Compute the new tree layout.
   var nodes = tree.nodes(root).reverse(),
       links = tree.links(nodes);
