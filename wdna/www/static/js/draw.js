@@ -63,28 +63,53 @@ function loadTreeData() {
   var postData = grid.jqGrid('getGridParam', 'postData');
   var filters = postData.filters ? JSON.parse(postData.filters) : null;
   
-  // Function to get filtered data
-  function getFilteredData() {
-    // Get the current filtered IDs
-    var filteredIds = grid.jqGrid('getDataIDs');
-    var data = [];
+  // Get all filtered data
+  function getAllFilteredData() {
+    var allData = [];
+    var allGridData = grid.jqGrid('getGridParam', 'data');
     
-    // Get data only for filtered rows
-    filteredIds.forEach(function(id) {
-      var rowData = grid.jqGrid('getLocalRow', id);
-      if (rowData) {
-        data.push(rowData);
+    if (allGridData) {
+      allGridData.forEach(function(row) {
+        if (matchesFilters(row, filters)) {
+          allData.push(row);
+        }
+      });
+    }
+    
+    return allData;
+  }
+  
+  // Helper function to check if a row matches the current filters
+  function matchesFilters(row, filters) {
+    if (!filters || !filters.rules || filters.rules.length === 0) {
+      return true;
+    }
+    
+    return filters.rules.every(function(rule) {
+      var fieldValue = row[rule.field];
+      var filterValue = rule.data;
+      
+      // Convert both values to lowercase strings for case-insensitive comparison
+      var fieldValueStr = String(fieldValue || '').toLowerCase();
+      var filterValueStr = String(filterValue || '').toLowerCase();
+      
+      switch(rule.op) {
+        case 'eq': return fieldValueStr === filterValueStr;
+        case 'ne': return fieldValueStr !== filterValueStr;
+        case 'bw': return fieldValueStr.startsWith(filterValueStr);
+        case 'bn': return !fieldValueStr.startsWith(filterValueStr);
+        case 'ew': return fieldValueStr.endsWith(filterValueStr);
+        case 'en': return !fieldValueStr.endsWith(filterValueStr);
+        case 'cn': return fieldValueStr.includes(filterValueStr);
+        case 'nc': return !fieldValueStr.includes(filterValueStr);
+        default: return true;
       }
     });
-    
-    return data;
   }
   
   if (filters && filters.rules && filters.rules.length > 0) {
-    // If there are filters, get only the filtered data
-    sequences_data = getFilteredData();
+    sequences_data = getAllFilteredData();
   } else {
-    // No filters, use all data from the grid
     sequences_data = grid.jqGrid('getGridParam', 'data');
   }
   
@@ -114,6 +139,7 @@ function augmentTreeWithSequences(node) {
   
   // Add breeds info to this node
   node.breeds = [];
+  node.breedCounts = {};
   
   // First, process children to ensure breeds are assigned to the most specific nodes first
   if (node.children) {
@@ -161,18 +187,25 @@ function augmentTreeWithSequences(node) {
            }));
         
         if (isMostSpecific && seq["Breed of dog"]) {
-          // Always add the breed, even if it's already in the list
-          node.breeds.push(seq["Breed of dog"]);
+          var breed = seq["Breed of dog"];
+          node.breeds.push(breed);
           
-          // Add breed to mods array with a special prefix to identify it as a breed
+          // Count occurrences of each breed
+          node.breedCounts[breed] = (node.breedCounts[breed] || 0) + 1;
+          
+          // Add breed to mods array with count
           if (!node.mods) node.mods = [];
-          node.mods.push("BREED:" + seq["Breed of dog"]);
+          // Remove any existing entry for this breed
+          node.mods = node.mods.filter(function(mod) {
+            return typeof mod !== 'string' || !mod.startsWith("BREED:" + breed + " (");
+          });
+          // Add new entry with updated count
+          node.mods.push("BREED:" + breed + " (" + node.breedCounts[breed] + ")");
         }
       }
     });
     
     // Mark nodes for removal if they have no breeds
-    // For leaf nodes (no children)
     if (!node.children && !node._children && node.breeds.length === 0) {
       node.remove = true;
     }
@@ -248,16 +281,14 @@ function update(source) {
       .each(function(d){
         if (d.mods && d.mods.length * ymodsize > 2*ydep){
           start_i = Math.floor((2*d.mods.length)/3);
-          end_i = Math.min(start_i + 20, d.mods.length);
-          for (var i=start_i; i<end_i; i++){
+          for (var i=start_i; i<d.mods.length; i++){
             var mod = d.mods[i];
             var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
             
-            // Truncate breed names to 9 characters without adding "..."
             var displayText = mod;
             if (isBreed) {
               var breedName = mod.substring(6);
-              displayText = breedName.length > 9 ? breedName.substring(0, 9) : breedName;
+              displayText = breedName;
             }
             
             d3.select(this)
@@ -267,7 +298,7 @@ function update(source) {
               .attr("font-size", ymodsize)
               .attr("text-anchor", "start")
               .attr("fill", isBreed ? "blue" : "black")
-              .text(isBreed ? displayText : mod);
+              .text(displayText);
           }
         }
       })
@@ -285,24 +316,22 @@ function update(source) {
         }
       })
       .each(function(d){
-
         if (d.mods && d.mods.length * ymodsize > ydep){
           if (d.mods && d.mods.length * ymodsize > 2*ydep){
             start_i = Math.floor(d.mods.length/3);
-            end_i = Math.min(start_i + 20, Math.floor((2*d.mods.length)/3));
+            end_i = Math.floor((2*d.mods.length)/3);
           }else{
             start_i = Math.floor(d.mods.length/2);
-            end_i = Math.min(start_i + 20, d.mods.length);
+            end_i = d.mods.length;
           }
           for (var i=start_i; i<end_i; i++){
             var mod = d.mods[i];
             var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
             
-            // Truncate breed names to 9 characters without adding "..."
             var displayText = mod;
             if (isBreed) {
               var breedName = mod.substring(6);
-              displayText = breedName.length > 9 ? breedName.substring(0, 9) : breedName;
+              displayText = breedName;
             }
             
             d3.select(this)
@@ -312,7 +341,7 @@ function update(source) {
               .attr("font-size", ymodsize)
               .attr("text-anchor", "start")
               .attr("fill", isBreed ? "blue" : "black")
-              .text(isBreed ? displayText : mod);
+              .text(displayText);
           }
         }
       })
@@ -334,25 +363,23 @@ function update(source) {
       })
       .each(function(d){
         if (d.mods){
-          
           if(d.mods.length * ymodsize > ydep){
-            if ( d.mods.length * ymodsize > 2*ydep){
-              max_element = Math.min(20, Math.floor((d.mods.length)/3));
+            if (d.mods.length * ymodsize > 2*ydep){
+              max_element = Math.floor(d.mods.length/3);
             }else{
-              max_element = Math.min(20, Math.floor(d.mods.length/2));
+              max_element = Math.floor(d.mods.length/2);
             }
           }else{
-            max_element = Math.min(20, d.mods.length);
+            max_element = d.mods.length;
           }
           for (var i=0; i<max_element; i++){
             var mod = d.mods[i];
             var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
             
-            // Truncate breed names to 9 characters without adding "..."
             var displayText = mod;
             if (isBreed) {
               var breedName = mod.substring(6);
-              displayText = breedName.length > 9 ? breedName.substring(0, 9) : breedName;
+              displayText = breedName;
             }
             
             d3.select(this)
@@ -362,7 +389,7 @@ function update(source) {
               .attr("font-size", ymodsize)
               .attr("text-anchor", "start")
               .attr("fill", isBreed ? "blue" : "black")
-              .text(isBreed ? displayText : mod);
+              .text(displayText);
           }
         }
       })
