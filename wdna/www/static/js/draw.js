@@ -1,32 +1,64 @@
+// Add global variable for mutations visibility
+var showMutations = false; // Set to false by default
+var showBreeds = true; // Set breeds visible by default
+var root; // Add global root variable
+
 function toggle() {
 	var ele = document.getElementById("toggleText");
 	var text = document.getElementById("displayText");
 	if(ele.style.display == "block") {
     		ele.style.display = "none";
-		text.innerHTML = "show legend";
+		text.innerHTML = "Legend";
   	}
 	else {
 		ele.style.display = "block";
-		text.innerHTML = "hide legend";
+		text.innerHTML = "Hide Legend";
 	}
 } 
 
+// Add mutations toggle function
+function toggleMutations() {
+    var checkbox = document.getElementById("toggle-mutations");
+    showMutations = checkbox.checked;
+    if (root) {
+        update(root); // Update tree visualization
+    }
+}
 
-function init_root(root, width){
-  root.x0 = 0;
-  root.y0 = 0;
-  expandAll(root);
-  update(root);
-  
-  // Scroll the tree container instead of the window
-  var treeContainer = document.getElementById("tree-container");
-  var scrollPosition = width*5/6 - window.innerWidth/2;
-  if (treeContainer) {
-    // Delay the scroll operation to ensure the SVG is fully rendered
-    setTimeout(function() {
-      treeContainer.scrollLeft = scrollPosition;
-    }, 100);
-  }
+function toggleBreeds() {
+    var checkbox = document.getElementById("toggle-breeds");
+    showBreeds = checkbox.checked;
+    if (root) {
+        update(root);
+    }
+}
+
+function init_root(json_root, width){
+    root = json_root; // Store root globally
+    root.x0 = 0;
+    root.y0 = 0;
+    expandAll(root);
+    
+    // Set initial checkbox states
+    var mutationsCheckbox = document.getElementById("toggle-mutations");
+    var breedsCheckbox = document.getElementById("toggle-breeds");
+    if (mutationsCheckbox) {
+        mutationsCheckbox.checked = false;
+    }
+    if (breedsCheckbox) {
+        breedsCheckbox.checked = true;
+    }
+    
+    update(root);
+    
+    // Scroll the tree container instead of the window
+    var treeContainer = document.getElementById("tree-container");
+    var scrollPosition = width*5/6 - window.innerWidth/2;
+    if (treeContainer) {
+        setTimeout(function() {
+            treeContainer.scrollLeft = scrollPosition;
+        }, 100);
+    }
 }
 
 // ************** Generate the tree diagram  *****************
@@ -37,15 +69,83 @@ var margin = {top: 20, right: 0, bottom: 20, left: 20},
  ymodsize = 8;
 var i = 0,
     duration = 750;
+
 var tree = d3.layout.tree()
-    .nodeSize([75,50])
+    .nodeSize([75,50]);
 var diagonal = d3.svg.diagonal()
- .projection(function(d) { return [d.x, d.y]; });
-var svg = d3.select("#tree-container").append("svg")
- .attr("width", width + margin.right + margin.left)
- .attr("height", height + margin.top + margin.bottom)
-  .append("g")
- .attr("transform", "translate(" + width*5/6 + "," + margin.top + ")");
+    .projection(function(d) { return [d.x, d.y]; });
+
+// Create outer SVG container that will handle zooming
+var outerSvg = d3.select("#tree-container").append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom);
+
+// Add a background rect to catch zoom events
+outerSvg.append("rect")
+    .attr("class", "zoom-background")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
+    .style("fill", "none")
+    .style("pointer-events", "all");
+
+// Create inner SVG group that will be transformed
+var svg = outerSvg.append("g")
+    .attr("transform", "translate(" + width*5/6 + "," + margin.top + ")");
+
+// Initialize zoom behavior
+var zoom = d3.behavior.zoom()
+    .scaleExtent([0.1, 3])
+    .on("zoom", function() {
+        svg.attr("transform", 
+            "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    });
+
+// Apply zoom behavior to the outer SVG
+outerSvg.call(zoom);
+
+// Initialize zoom state
+var initialTranslate = [width*5/6, margin.top];
+zoom.translate(initialTranslate);
+
+// Handle scrolling
+outerSvg.on("wheel.zoom", function() {
+    d3.event.preventDefault();
+    d3.event.stopPropagation();
+    
+    var currentTranslate = zoom.translate();
+    
+    // Handle both horizontal and vertical scrolling
+    currentTranslate[0] -= d3.event.deltaX || 0;  // Horizontal scrolling
+    currentTranslate[1] -= d3.event.deltaY || 0;  // Vertical scrolling
+    
+    zoom.translate(currentTranslate);
+    zoom.event(outerSvg);
+});
+
+// Add zoom control handlers
+d3.select("#zoom-in").on("click", function() {
+    var currentTranslate = zoom.translate();
+    var currentScale = zoom.scale();
+    var newScale = currentScale * 1.2;
+    zoom.scale(newScale);
+    zoom.translate(currentTranslate);
+    zoom.event(outerSvg);
+});
+
+d3.select("#zoom-out").on("click", function() {
+    var currentTranslate = zoom.translate();
+    var currentScale = zoom.scale();
+    var newScale = currentScale * 0.8;
+    zoom.scale(newScale);
+    zoom.translate(currentTranslate);
+    zoom.event(outerSvg);
+});
+
+d3.select("#zoom-reset").on("click", function() {
+    zoom.scale(1);
+    zoom.translate(initialTranslate);
+    zoom.event(outerSvg);
+});
 
 // Store sequences data globally
 var sequences_data = [];
@@ -228,244 +328,174 @@ function augmentTreeWithSequences(node) {
   }
 }
 
-function update(source) {
-  // Filter out removed nodes before computing layout
-  function filterRemovedNodes(node) {
-    if (!node) return null;
+// Helper function to sort mods array
+function sortMods(mods) {
+    if (!mods) return [];
     
-    // Filter children arrays if they exist
-    if (node.children) {
-      node.children = node.children.filter(function(child) { return !child.remove; });
-      node.children.forEach(filterRemovedNodes);
-    }
-    if (node._children) {
-      node._children = node._children.filter(function(child) { return !child.remove; });
-      node._children.forEach(filterRemovedNodes);
-    }
+    // Separate breeds and mutations
+    let breeds = mods.filter(mod => typeof mod === 'string' && mod.startsWith('BREED:'));
+    let mutations = mods.filter(mod => !(typeof mod === 'string' && mod.startsWith('BREED:')));
     
-    return node;
-  }
-  
-  // Apply filter before computing layout
-  filterRemovedNodes(root);
-  
-  // Compute the new tree layout.
-  var nodes = tree.nodes(root).reverse(),
-      links = tree.links(nodes);
-  // Normalize for fixed-depth.
-  nodes.forEach(function(d) { 
-    d.y = d.depth * ydep;
-  });
-  // Update the nodes…
-  var node = svg.selectAll("g.node")
-      .data(nodes, function(d) { return d.id || (d.id = ++i); });
-  // Enter any new nodes at the parent's previous position.
-  var nodeEnter = node.enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function(d) { return "translate(" + source.x0 + "," + source.y0 + ")"; })
-      .on("click", click);
-  nodeEnter.append("circle")
-      .attr("r", 1e-6)
-      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
-      .style("stroke",function(d) { return d.children ? "green":"red"})
-  nodeEnter.append("text")
-      .attr("dy", ".35em")
-      .attr("x", -7)
-      .attr("text-anchor", "end" )
-      .text(function(d) { return d.name; })
-      .style("fill-opacity", 1e-6);
-  text3 = nodeEnter.append("text")
-      .attr('y',function(d){
-        return d.mods && d.mods.length*ymodsize > 2*ydep? -ymodsize-Math.floor(ymodsize*d.mods.length)/3:0 
-      })
-      .each(function(d){
-        if (d.mods && d.mods.length * ymodsize > 2*ydep){
-          start_i = Math.floor((2*d.mods.length)/3);
-          for (var i=start_i; i<d.mods.length; i++){
-            var mod = d.mods[i];
-            var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
-            
-            var displayText = mod;
-            if (isBreed) {
-              var breedName = mod.substring(6);
-              displayText = breedName;
-            }
-            
-            d3.select(this)
-              .append("tspan")
-              .attr("dy", ymodsize)
-              .attr("x", 70)
-              .attr("font-size", ymodsize)
-              .attr("text-anchor", "start")
-              .attr("fill", isBreed ? "blue" : "black")
-              .text(displayText);
-          }
-        }
-      })
-  
-  text2 = nodeEnter.append("text")
-      .attr('y',function(d){
-        if (d.mods && d.mods.length * ymodsize > ydep){
-          if (d.mods && d.mods.length * ymodsize > 2*ydep){
-            return -ymodsize-Math.floor(ymodsize*d.mods.length)/3;
-          }else{
-            return -ymodsize-Math.floor(ymodsize*d.mods.length)/2;
-          }
-        }else{
-          return 0
-        }
-      })
-      .each(function(d){
-        if (d.mods && d.mods.length * ymodsize > ydep){
-          if (d.mods && d.mods.length * ymodsize > 2*ydep){
-            start_i = Math.floor(d.mods.length/3);
-            end_i = Math.floor((2*d.mods.length)/3);
-          }else{
-            start_i = Math.floor(d.mods.length/2);
-            end_i = d.mods.length;
-          }
-          for (var i=start_i; i<end_i; i++){
-            var mod = d.mods[i];
-            var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
-            
-            var displayText = mod;
-            if (isBreed) {
-              var breedName = mod.substring(6);
-              displayText = breedName;
-            }
-            
-            d3.select(this)
-              .append("tspan")
-              .attr("dy", ymodsize)
-              .attr("x", 35)
-              .attr("font-size", ymodsize)
-              .attr("text-anchor", "start")
-              .attr("fill", isBreed ? "blue" : "black")
-              .text(displayText);
-          }
-        }
-      })
-  text = nodeEnter.append("text")
-      .attr("y", function(d){ 
-        if (d.mods){
-          if(d.mods.length * ymodsize > ydep){
-            if (d.mods && d.mods.length * ymodsize > 2*ydep){
-              return -ymodsize-Math.floor(ymodsize*d.mods.length)/3;
-            }else{
-              return -ymodsize-Math.floor(ymodsize*d.mods.length)/2;
-            }
-          }else{
-            return -(d.mods.length+1)*ymodsize;
-          }
-        }else{
-          return 0
-        }
-      })
-      .each(function(d){
-        if (d.mods){
-          if(d.mods.length * ymodsize > ydep){
-            if (d.mods.length * ymodsize > 2*ydep){
-              max_element = Math.floor(d.mods.length/3);
-            }else{
-              max_element = Math.floor(d.mods.length/2);
-            }
-          }else{
-            max_element = d.mods.length;
-          }
-          for (var i=0; i<max_element; i++){
-            var mod = d.mods[i];
-            var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
-            
-            var displayText = mod;
-            if (isBreed) {
-              var breedName = mod.substring(6);
-              displayText = breedName;
-            }
-            
-            d3.select(this)
-              .append("tspan")
-              .attr("dy", ymodsize)
-              .attr("x", 0)
-              .attr("font-size", ymodsize)
-              .attr("text-anchor", "start")
-              .attr("fill", isBreed ? "blue" : "black")
-              .text(displayText);
-          }
-        }
-      })
-      
-  // Add breeds display in a simpler way - just one column with limit
-  nodeEnter.append("text")
-      .attr("class", "breeds-text")
-      .attr("y", 0)
-      .attr("x", 0)
-      .style("fill-opacity", 0);  // Hide this element
+    return { breeds, mutations };
+}
 
-// Transition nodes to their new position.
-  var nodeUpdate = node.transition()
-      .duration(duration)
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-  nodeUpdate.select("circle")
-      .attr("r", 4.5)
-      .style("fill", function(d) { 
-        if(d._children){
-          if (d.children){
-            if (d._children.length == 1){
-              return "#fff";
+function getVisibleMods(mods) {
+    if (!mods) return [];
+    return mods.filter(mod => {
+        var isBreed = typeof mod === 'string' && mod.startsWith("BREED:");
+        return (isBreed && showBreeds) || (!isBreed && showMutations);
+    });
+}
+
+function update(source) {
+    // Compute the new tree layout.
+    var nodes = tree.nodes(root).reverse(),
+        links = tree.links(nodes);
+
+    // Normalize for fixed-depth.
+    nodes.forEach(function(d) { d.y = d.depth * ydep; });
+
+    // Update the nodes…
+    var node = svg.selectAll("g.node")
+        .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+    // Enter any new nodes at the parent's previous position.
+    var nodeEnter = node.enter().append("g")
+        .attr("class", "node")
+        .attr("transform", function(d) { return "translate(" + source.x0 + "," + source.y0 + ")"; })
+        .on("click", click);
+
+    nodeEnter.append("circle")
+        .attr("r", 1e-6)
+        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; })
+        .style("stroke", function(d) { return d.children ? "green" : "red"; });
+
+    nodeEnter.append("text")
+        .attr("dy", ".35em")
+        .attr("x", -7)
+        .attr("text-anchor", "end")
+        .text(function(d) { return d.name; })
+        .style("fill-opacity", 1e-6);
+
+    // Create separate groups for breeds and mutations
+    var modsGroup = nodeEnter.append("g")
+        .attr("class", "mods-group");
+
+    // Add breeds and mutations
+    modsGroup.each(function(d) {
+        if (!d.mods) return;
+        
+        var sorted = sortMods(d.mods);
+        var container = d3.select(this);
+        
+        // Add mutations above breeds
+        var mutationsGroup = container.append("g")
+            .attr("class", "mutations-group")
+            .style("display", showMutations ? "block" : "none");
+        
+        sorted.mutations.forEach(function(mutation, i) {
+            mutationsGroup.append("text")
+                .attr("y", -(sorted.breeds.length + sorted.mutations.length - i) * ymodsize)
+                .attr("x", 0)
+                .attr("font-size", ymodsize)
+                .attr("text-anchor", "start")
+                .attr("fill", "black")
+                .text(mutation);
+        });
+
+        // Add breeds below mutations
+        var breedsGroup = container.append("g")
+            .attr("class", "breeds-group")
+            .style("display", showBreeds ? "block" : "none");
+        
+        sorted.breeds.forEach(function(breed, i) {
+            breedsGroup.append("text")
+                .attr("y", -(sorted.breeds.length - i) * ymodsize)
+                .attr("x", 0)
+                .attr("font-size", ymodsize)
+                .attr("text-anchor", "start")
+                .attr("fill", "blue")
+                .text(breed.substring(6));
+        });
+    });
+
+    // Transition nodes to their new position.
+    var nodeUpdate = node.transition()
+        .duration(duration)
+        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+    nodeUpdate.select("circle")
+        .attr("r", 4.5)
+        .style("fill", function(d) { 
+            if(d._children){
+                if (d.children){
+                    if (d._children.length == 1){
+                        return "#fff";
+                    }else{
+                        return "lightgreen";
+                    }
+                }else{
+                    return "lightgreen";
+                }
             }else{
-              return "lightgreen";
+                return "#fff";
             }
-          }else{
-            return "lightgreen";
-          }
-        }else{
-          return "#fff";
-        }
         })
-      .style("stroke",function(d) { return d.children || d._children  ? "green":"red"});
-  nodeUpdate.select("text")
-      .style("fill-opacity", 1);
-  // Make sure breeds text transitions properly
-  nodeUpdate.select(".breeds-text")
-      .style("fill-opacity", 1);
-  // Transition exiting nodes to the parent's new position.
-  var nodeExit = node.exit().transition()
-      .duration(duration)
-      .attr("transform", function(d) { return "translate(" + source.x + "," + source.y + ")"; })
-      .remove();
-  nodeExit.select("circle")
-      .attr("r", 1e-6);
-  nodeExit.select("text")
-      .style("fill-opacity", 1e-6);
-  nodeExit.select(".breeds-text")
-      .style("fill-opacity", 1e-6);
-  // Update the links…
-  var link = svg.selectAll("path.link")
-      .data(links, function(d) { return d.target.id; });
-  // Enter any new links at the parent's previous position.
-  link.enter().insert("path", "g")
-      .attr("class", "link")
-      .attr("d", function(d) {
-        var o = {x: source.x0, y: source.y0};
-        return diagonal({source: o, target: o});
-      });
-  // Transition links to their new position.
-  link.transition()
-      .duration(duration)
-      .attr("d", diagonal);
-  // Transition exiting nodes to the parent's new position.
-  link.exit().transition()
-      .duration(duration)
-      .attr("d", function(d) {
-        var o = {x: source.x, y: source.y};
-        return diagonal({source: o, target: o});
-      })
-      .remove();
-  // Stash the old positions for transition.
-  nodes.forEach(function(d) {
-    d.x0 = d.x;
-    d.y0 = d.y;
-  });
+        .style("stroke", function(d) { return d.children || d._children ? "green" : "red"; });
+
+    nodeUpdate.select("text")
+        .style("fill-opacity", 1);
+
+    // Update mutations visibility
+    svg.selectAll(".mutations-group")
+        .style("display", showMutations ? "block" : "none");
+
+    svg.selectAll(".breeds-group")
+        .style("display", showBreeds ? "block" : "none");
+
+    // Transition exiting nodes to the parent's new position.
+    var nodeExit = node.exit().transition()
+        .duration(duration)
+        .attr("transform", function(d) { return "translate(" + source.x + "," + source.y + ")"; })
+        .remove();
+
+    nodeExit.select("circle")
+        .attr("r", 1e-6);
+
+    nodeExit.select("text")
+        .style("fill-opacity", 1e-6);
+
+    // Update the links…
+    var link = svg.selectAll("path.link")
+        .data(links, function(d) { return d.target.id; });
+
+    // Enter any new links at the parent's previous position.
+    link.enter().insert("path", "g")
+        .attr("class", "link")
+        .attr("d", function(d) {
+            var o = {x: source.x0, y: source.y0};
+            return diagonal({source: o, target: o});
+        });
+
+    // Transition links to their new position.
+    link.transition()
+        .duration(duration)
+        .attr("d", diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    link.exit().transition()
+        .duration(duration)
+        .attr("d", function(d) {
+            var o = {x: source.x, y: source.y};
+            return diagonal({source: o, target: o});
+        })
+        .remove();
+
+    // Stash the old positions for transition.
+    nodes.forEach(function(d) {
+        d.x0 = d.x;
+        d.y0 = d.y;
+    });
 }
 
 function hide(d, all){

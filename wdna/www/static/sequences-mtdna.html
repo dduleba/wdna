@@ -30,15 +30,99 @@
           margin-top: 30px;
           width: 100%;
           overflow-x: auto;
-          overflow-y: hidden;
+          overflow-y: auto;
           position: relative;
         }
         #table-container {
           margin-bottom: 20px;
+          transition: max-height 0.3s ease-in-out;
+          overflow: hidden;
+        }
+        #controls-panel {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: white;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          padding: 10px;
+          z-index: 1000;
+        }
+        .controls-container {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+        .control-section {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .control-section:not(:last-child) {
+          border-right: 1px solid #eee;
+          padding-right: 15px;
+        }
+        .control-section h3 {
+          font-size: 12px;
+          margin: 0;
+          color: #666;
+          font-weight: normal;
+        }
+        #toggleText {
+          position: absolute;
+          bottom: 100%;
+          right: 0;
+          margin-bottom: 10px;
+          background: white;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          padding: 10px;
+          font-size: 11px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          min-width: 200px;
+          display: none;
+        }
+        #toggleText p {
+          margin: 0 0 8px 0;
+        }
+        #toggleText img {
+          vertical-align: middle;
+          margin-right: 5px;
+        }
+        .legend-item {
+          display: flex;
+          align-items: center;
+          margin: 3px 0;
+          white-space: nowrap;
+        }
+        button {
+          padding: 4px 8px;
+          cursor: pointer;
+        }
+        .checkbox-label {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          cursor: pointer;
+          user-select: none;
+          white-space: nowrap;
+          font-size: 12px;
+          color: #333;
+        }
+        .checkbox-label input[type="checkbox"] {
+          margin: 0;
+        }
+        .zoom-controls {
+          display: flex;
+          gap: 3px;
+        }
+        .zoom-controls button {
+          padding: 2px 6px;
+          font-size: 12px;
         }
        </style>
        
-    
     <!-- table -->
     <script type="text/javascript" src="js/jquery/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.11.1.redmond/jquery-ui.min.js"></script>
@@ -53,21 +137,16 @@
         $(document).ready(function () {
             init_seq();
             
-            // Add handler for jqGrid loadComplete event to update the tree
             $("#sequences").on('jqGridLoadComplete', function() {
-                // Load tree data from jqGrid after the grid is completely loaded
                 loadTreeData();
             });
             
-            // To handle data changes in the grid, add a handler for the filter toolbar
             $("#sequences").on('jqGridToolbarFilterClicked', function() {
-                // When filter is applied, wait for the grid to update then reload tree
                 setTimeout(function() {
                     loadTreeData();
                 }, 500);
             });
             
-            // Also reload tree after paging or sorting
             $("#sequences").on('jqGridSortCol', function() {
                 setTimeout(function() {
                     loadTreeData();
@@ -77,44 +156,101 @@
             $("#sequences").on('jqGridAfterLoadComplete', function() {
                 loadTreeData();
             });
-            
-            // Original commented code
-            // Inject modified draw.js functionality
-            // initializeTree();
+
+            // Table visibility toggle
+            $("#toggle-table").change(function() {
+                var container = $("#table-container");
+                if (this.checked) {
+                    container.css("max-height", container[0].scrollHeight + "px");
+                } else {
+                    container.css("max-height", "0px");
+                }
+            });
+
+            // Legend visibility toggle
+            $("#toggle-legend").change(function() {
+                var legend = $("#toggleText");
+                legend.css("display", this.checked ? "block" : "none");
+            });
+
+            // Mutations visibility toggle
+            $("#toggle-mutations").change(function() {
+                if (typeof toggleMutations === 'function') {
+                    toggleMutations();
+                }
+            });
+
+            // Breeds visibility toggle
+            $("#toggle-breeds").change(function() {
+                if (typeof toggleBreeds === 'function') {
+                    toggleBreeds();
+                }
+            });
         });
-        
-        // Function to initialize the tree
-        // function initializeTree() {
-        //     // Load the draw.js script which will now use #tree-container instead of body
-        //     $.getScript("js/draw.js");
-        // }
     </script>
-
-
-
 </head>
 <body>
-    <div id="table-container">
+    <div id="table-container" style="max-height: none;">
         <table id="sequences"><tr><td/></tr></table>
         <div id="sequencePager"></div>
         <div id="tree-update-status" style="margin-top: 10px; color: #666;">Tree is displayed based on the sequence data in the table. Filter or sort the table to update the tree visualization.</div>
     </div>
 
-    <div id="menu">
-        <a id="displayText" href="javascript:toggle();">show legend</a>
-        <div id="toggleText" style="display: none">
-        <p>
-        Simplified phylogenethic mtDNA tree of <i>Canis lupus familiaris</i>. The schematic tree is based on the complete mitochondrial genomes phylogenetic tree linked to: mtDNA Canis lupus familiaris tree
-        </p>
-        <img src="data/green_green.png" width=13px height=13px>    Haplogroup containing subhaplogroups (show subhaplogroups after click)<br>
-        <img src="data/green_white.png" width=13px height=13px>    Haplogroup containing subhaplogroups (hide subhaplogroups after click)<br>
-        <img src="data/red.png" width=13px height=13px>    Terminal subhaplogroups<br>
-        * - Kim reference sequence
+    <div id="controls-panel">
+        <div id="toggleText">
+            <p>
+            Simplified phylogenethic mtDNA tree of <i>Canis lupus familiaris</i>
+            </p>
+            <div class="legend-item">
+                <img src="data/green_green.png" width=13px height=13px>
+                <span>Haplogroup with subhaplogroups (show)</span>
+            </div>
+            <div class="legend-item">
+                <img src="data/green_white.png" width=13px height=13px>
+                <span>Haplogroup with subhaplogroups (hide)</span>
+            </div>
+            <div class="legend-item">
+                <img src="data/red.png" width=13px height=13px>
+                <span>Terminal subhaplogroups</span>
+            </div>
+            <div class="legend-item">
+                <span>* - Kim reference sequence</span>
+            </div>
+        </div>
+
+        <div class="controls-container">
+            <div class="control-section">
+                <h3>View:</h3>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="toggle-table" checked>
+                    Table
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="toggle-breeds" checked>
+                    Breeds
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="toggle-mutations">
+                    Mutations
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="toggle-legend">
+                    Legend
+                </label>
+            </div>
+            
+            <div class="control-section">
+                <h3>Zoom:</h3>
+                <div class="zoom-controls">
+                    <button id="zoom-in" title="Zoom In">+</button>
+                    <button id="zoom-out" title="Zoom Out">-</button>
+                    <button id="zoom-reset" title="Reset">R</button>
+                </div>
+            </div>
         </div>
     </div>
     
     <div id="tree-container"></div>
-    <!-- <script src="js/d3.min.js"></script> -->
     <script src="js/draw.js"></script>
 </body>
 </html>
