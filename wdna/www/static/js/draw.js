@@ -3,6 +3,11 @@ var showMutations = false; // Set to false by default
 var showBreeds = true; // Set breeds visible by default
 var root; // Add global root variable
 
+// Add new constants for layout configuration
+var MAX_ROWS_PER_COLUMN = 15; // Maximum number of items in a column
+var MIN_COLUMN_WIDTH = 20; // Minimum width for a column in pixels
+var COLUMN_SPACING = 10; // Spacing between columns in pixels
+
 function toggle() {
 	var ele = document.getElementById("toggleText");
 	var text = document.getElementById("displayText");
@@ -226,6 +231,8 @@ function loadTreeData() {
     root = json_tree[0];
     // Augment tree nodes with sequence information
     augmentTreeWithSequences(root);
+    // Clean up the tree by removing nodes with no breeds
+    cleanupTree(root);
     init_root(json_tree[0], width);
     
     // Update status message after tree is loaded
@@ -304,33 +311,38 @@ function augmentTreeWithSequences(node) {
         }
       }
     });
-    
-    // Mark nodes for removal if they have no breeds
-    if (!node.children && !node._children && node.breeds.length === 0) {
-      node.remove = true;
-    }
-    
-    // For internal nodes, check if they have any valid children or breeds
-    function hasValidChildren(n) {
-      if (!n) return false;
-      if (n.children) {
-        return n.children.some(function(child) { return !child.remove; });
-      }
-      if (n._children) {
-        return n._children.some(function(child) { return !child.remove; });
-      }
-      return false;
-    }
-    
-    if (!node.breeds.length && !hasValidChildren(node)) {
-      node.remove = true;
-    }
   }
+}
+
+// Function to clean up the tree by removing nodes with no breeds
+function cleanupTree(node) {
+  if (!node) return false;
+
+  // Process children first
+  if (node.children) {
+    // Filter out children that should be removed
+    node.children = node.children.filter(function(child) {
+      return cleanupTree(child);
+    });
+  }
+  if (node._children) {
+    // Filter out _children that should be removed
+    node._children = node._children.filter(function(child) {
+      return cleanupTree(child);
+    });
+  }
+
+  // Node should be kept if:
+  // 1. It has breeds assigned directly to it, or
+  // 2. It has any remaining children after cleanup
+  return node.breeds.length > 0 || 
+         (node.children && node.children.length > 0) || 
+         (node._children && node._children.length > 0);
 }
 
 // Helper function to sort mods array
 function sortMods(mods) {
-    if (!mods) return [];
+    if (!mods) return { breeds: [], mutations: [] };
     
     // Separate breeds and mutations
     let breeds = mods.filter(mod => typeof mod === 'string' && mod.startsWith('BREED:'));
@@ -347,6 +359,45 @@ function getVisibleMods(mods) {
     });
 }
 
+// Helper function to calculate text width
+function getTextWidth(text, fontSize) {
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    context.font = fontSize + 'px Arial'; // Match the font used in the visualization
+    return context.measureText(text).width;
+}
+
+// Helper function to organize items into columns
+function organizeIntoColumns(items, maxRowsPerColumn) {
+    if (!items || items.length === 0) return [];
+    
+    // Calculate maximum text width for proper column sizing
+    var maxWidth = 0;
+    items.forEach(function(item) {
+        var text = typeof item === 'string' && item.startsWith('BREED:') ? 
+            item.substring(6) : item;
+        var width = getTextWidth(text, ymodsize);
+        maxWidth = Math.max(maxWidth, width);
+    });
+    
+    // Calculate number of columns needed
+    var columnWidth = Math.max(MIN_COLUMN_WIDTH, maxWidth + COLUMN_SPACING);
+    var numColumns = Math.ceil(items.length / maxRowsPerColumn);
+    
+    // Organize items into columns
+    var columns = [];
+    for (var i = 0; i < numColumns; i++) {
+        var columnItems = items.slice(i * maxRowsPerColumn, (i + 1) * maxRowsPerColumn);
+        columns.push({
+            items: columnItems,
+            width: columnWidth
+        });
+    }
+    
+    return columns;
+}
+
+// Modify the update function to handle the new layout
 function update(source) {
     // Compute the new tree layout.
     var nodes = tree.nodes(root).reverse(),
@@ -377,46 +428,62 @@ function update(source) {
         .text(function(d) { return d.name; })
         .style("fill-opacity", 1e-6);
 
-    // Create separate groups for breeds and mutations
+    // Modify the mods group creation and handling
     var modsGroup = nodeEnter.append("g")
         .attr("class", "mods-group");
 
-    // Add breeds and mutations
+    // Add breeds and mutations with column layout
     modsGroup.each(function(d) {
         if (!d.mods) return;
         
         var sorted = sortMods(d.mods);
         var container = d3.select(this);
         
-        // Add mutations above breeds
+        // Handle mutations first (they go above breeds)
         var mutationsGroup = container.append("g")
             .attr("class", "mutations-group")
             .style("display", showMutations ? "block" : "none");
-        
-        sorted.mutations.forEach(function(mutation, i) {
-            mutationsGroup.append("text")
-                .attr("y", -(sorted.breeds.length + sorted.mutations.length - i) * ymodsize)
-                .attr("x", 0)
-                .attr("font-size", ymodsize)
-                .attr("text-anchor", "start")
-                .attr("fill", "black")
-                .text(mutation);
-        });
+            
+        if (sorted.mutations.length > 0) {
+            var mutationColumns = organizeIntoColumns(sorted.mutations, MAX_ROWS_PER_COLUMN);
+            var currentX = 0;
+            
+            mutationColumns.forEach(function(column) {
+                column.items.forEach(function(mutation, rowIndex) {
+                    mutationsGroup.append("text")
+                        .attr("x", currentX)
+                        .attr("y", -(sorted.breeds.length + rowIndex + 1) * ymodsize)
+                        .attr("font-size", ymodsize)
+                        .attr("text-anchor", "start")
+                        .attr("fill", "black")
+                        .text(mutation);
+                });
+                currentX += column.width;
+            });
+        }
 
-        // Add breeds below mutations
+        // Handle breeds
         var breedsGroup = container.append("g")
             .attr("class", "breeds-group")
             .style("display", showBreeds ? "block" : "none");
-        
-        sorted.breeds.forEach(function(breed, i) {
-            breedsGroup.append("text")
-                .attr("y", -(sorted.breeds.length - i) * ymodsize)
-                .attr("x", 0)
-                .attr("font-size", ymodsize)
-                .attr("text-anchor", "start")
-                .attr("fill", "blue")
-                .text(breed.substring(6));
-        });
+            
+        if (sorted.breeds.length > 0) {
+            var breedColumns = organizeIntoColumns(sorted.breeds, MAX_ROWS_PER_COLUMN);
+            var currentX = 0;
+            
+            breedColumns.forEach(function(column) {
+                column.items.forEach(function(breed, rowIndex) {
+                    breedsGroup.append("text")
+                        .attr("x", currentX)
+                        .attr("y", -(rowIndex + 1) * ymodsize)
+                        .attr("font-size", ymodsize)
+                        .attr("text-anchor", "start")
+                        .attr("fill", "blue")
+                        .text(breed.substring(6));
+                });
+                currentX += column.width;
+            });
+        }
     });
 
     // Transition nodes to their new position.
@@ -446,12 +513,18 @@ function update(source) {
     nodeUpdate.select("text")
         .style("fill-opacity", 1);
 
-    // Update mutations visibility
-    svg.selectAll(".mutations-group")
-        .style("display", showMutations ? "block" : "none");
+    // Update mutations and breeds visibility in the transition
+    nodeUpdate.selectAll(".mutations-group")
+        .style("display", function() {
+            console.log('Updating mutations visibility:', showMutations); // Debug log
+            return showMutations ? null : "none";
+        });
 
-    svg.selectAll(".breeds-group")
-        .style("display", showBreeds ? "block" : "none");
+    nodeUpdate.selectAll(".breeds-group")
+        .style("display", function() {
+            console.log('Updating breeds visibility:', showBreeds); // Debug log
+            return showBreeds ? null : "none";
+        });
 
     // Transition exiting nodes to the parent's new position.
     var nodeExit = node.exit().transition()
@@ -496,6 +569,13 @@ function update(source) {
         d.x0 = d.x;
         d.y0 = d.y;
     });
+
+    // Update mutations visibility
+    svg.selectAll(".mutations-group")
+        .style("display", showMutations ? "block" : "none");
+
+    svg.selectAll(".breeds-group")
+        .style("display", showBreeds ? "block" : "none");
 }
 
 function hide(d, all){
