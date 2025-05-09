@@ -150,6 +150,11 @@ d3.select("#zoom-reset").on("click", function() {
     zoom.scale(1);
     zoom.translate(initialTranslate);
     zoom.event(outerSvg);
+    
+    // Force update of the tree with current visibility states
+    if (root) {
+        update(root);
+    }
 });
 
 // Store sequences data globally
