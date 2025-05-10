@@ -119,9 +119,28 @@ outerSvg.on("wheel.zoom", function() {
     
     var currentTranslate = zoom.translate();
     
-    // Handle both horizontal and vertical scrolling
-    currentTranslate[0] -= d3.event.deltaX || 0;  // Horizontal scrolling
-    currentTranslate[1] -= d3.event.deltaY || 0;  // Vertical scrolling
+    // Handle horizontal scrolling normally
+    currentTranslate[0] -= d3.event.deltaX || 0;
+    
+    // For vertical scrolling, check if we would scroll above COY
+    var deltaY = d3.event.deltaY || 0;
+    var proposedYTranslate = currentTranslate[1] - deltaY;
+    
+    // Get the COY node position
+    if (root && root.name === "COY") {
+        // Calculate the minimum allowed Y translate value
+        // This prevents scrolling above the COY node
+        var minAllowedY = margin.top;
+        
+        // Only allow scrolling down (positive deltaY) or 
+        // scrolling up (negative deltaY) if we're not going above COY
+        if (deltaY > 0 || proposedYTranslate <= minAllowedY) {
+            currentTranslate[1] = proposedYTranslate;
+        }
+    } else {
+        // If COY node isn't available for some reason, allow normal scrolling
+        currentTranslate[1] -= deltaY;
+    }
     
     zoom.translate(currentTranslate);
     zoom.event(outerSvg);
