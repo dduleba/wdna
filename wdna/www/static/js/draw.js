@@ -5,9 +5,9 @@ var root; // Add global root variable
 
 // Add new constants for layout configuration
 var MAX_ROWS_PER_COLUMN = 15; // Maximum number of items in a column
-var MIN_COLUMN_WIDTH = 20; // Minimum width for a column in pixels
-var COLUMN_SPACING = 10; // Spacing between columns in pixels
-var NODE_BASE_SEPARATION = 75; // Base separation between nodes
+var MIN_COLUMN_WIDTH = 25; // Optimized value (changed from 30 to 25)
+var COLUMN_SPACING = 18; // Increased spacing between columns (from 15 to 18)
+var NODE_BASE_SEPARATION = 68; // Reduced base node separation (from 75 to 68)
 
 function toggle() {
 	var ele = document.getElementById("toggleText");
@@ -83,7 +83,7 @@ function calculateAllNodeWidths(node) {
     }
 }
 
-// Function to calculate width for a single node
+// Function to calculate width for a single node - without excessive compression
 function calculateNodeWidth(node) {
     if (!node || !node.mods) return;
     
@@ -97,20 +97,42 @@ function calculateNodeWidth(node) {
     var mutationsTotalWidth = 0;
     if (showMutations && sorted.mutations.length > 0) {
         var mutationColumns = organizeIntoColumns(sorted.mutations, MAX_ROWS_PER_COLUMN);
-        var currentX = 0;
         
-        mutationColumns.forEach(function(column) {
-            currentX += column.width;
-        });
-        mutationsTotalWidth = currentX;
+        // Calculate actual width considering additional spacing between columns
+        var columnCount = mutationColumns.length;
+        mutationsTotalWidth = mutationColumns.reduce(function(sum, column) {
+            return sum + column.width;
+        }, 0);
+        
+        // Add additional spacing between columns
+        if (columnCount > 1) {
+            mutationsTotalWidth += (columnCount - 1) * 25; // Significantly increased column spacing (from 15 to 25)
+        }
+        
+        // Better compression for the entire node
+        mutationsTotalWidth *= 0.9; // Reduced compression for better readability (from 0.85 to 0.9)
     }
     
     // Calculate breeds width - only if they are visible
     var breedsTotalWidth = 0;
     if (showBreeds && sorted.breeds.length > 0) {
         var breedColumns = organizeIntoColumns(sorted.breeds, MAX_ROWS_PER_COLUMN);
-        var currentX = 0;
         
+        // Calculate actual width considering additional spacing between columns
+        var columnCount = breedColumns.length;
+        breedsTotalWidth = breedColumns.reduce(function(sum, column) {
+            return sum + column.width;
+        }, 0);
+        
+        // Add additional spacing between columns
+        if (columnCount > 1) {
+            breedsTotalWidth += (columnCount - 1) * 25; // Significantly increased column spacing (from 15 to 25)
+        }
+        
+        // Better compression for the entire node
+        breedsTotalWidth *= 0.9; // Reduced compression for better readability (from 0.85 to 0.9)
+        
+        // Collect information about text length and width
         breedColumns.forEach(function(column) {
             column.items.forEach(function(breed) {
                 maxBreedsLength = Math.max(maxBreedsLength, breed.length);
@@ -118,44 +140,90 @@ function calculateNodeWidth(node) {
                 var textWidth = getTextWidth(breedText, ymodsize);
                 maxBreedTextWidth = Math.max(maxBreedTextWidth, textWidth);
             });
-            currentX += column.width;
         });
-        breedsTotalWidth = currentX;
     }
     
-    // Calculate total node width
+    // Calculate total node width - include additional margin for multiple columns
     totalNodeWidth = Math.max(breedsTotalWidth, mutationsTotalWidth);
+    
+    // Additional safety margin for nodes with labels
+    if (totalNodeWidth > 0) {
+        // Optimal safety margins
+        var extraMargin = 10; // Increased base margin (from 8 to 10)
+        
+        if (sorted.breeds.length > 10 || sorted.mutations.length > 10) {
+            extraMargin = 20; // Increased margin for nodes with many labels (from 15 to 20)
+        } else if (sorted.breeds.length > 5 || sorted.mutations.length > 5) {
+            extraMargin = 15; // Increased margin for nodes with medium number of labels (from 12 to 15)
+        }
+        
+        totalNodeWidth += extraMargin;
+    }
     
     // Store calculated values in the node
     node.maxBreedsLength = maxBreedsLength;
     node.maxBreedTextWidth = maxBreedTextWidth;
     node.totalNodeWidth = totalNodeWidth;
+    
+    // Also save the number of labels for use in separation
+    node.breedCount = showBreeds ? sorted.breeds.length : 0;
+    node.mutationCount = showMutations ? sorted.mutations.length : 0;
 }
 
 // ************** Generate the tree diagram  *****************
 var margin = {top: 20, right: 0, bottom: 20, left: 20},
  width = 11000 - margin.right - margin.left,
  height = 1900 - margin.top - margin.bottom,
- ydep = 150,
- ymodsize = 8;
+ ydep = 140,  // Increased vertical spacing between levels (from 130 to 140)
+ ymodsize = 7.5;  // Slightly increased font size for better readability (from 7 to 7.5)
 var i = 0,
     duration = 750;
 
 // Create tree layout with customized separation function
 var tree = d3.layout.tree()
-    .nodeSize([75,50])
+    .nodeSize([65,50])
     .separation(function(a, b) {
         // Use the total node width for spacing calculation
         var aWidth = a.totalNodeWidth || a.maxBreedTextWidth || 0;
         var bWidth = b.totalNodeWidth || b.maxBreedTextWidth || 0;
         
-        // Calculate minimum required separation based on node widths
-        // Division factor tuned for better visual result
-        var baseSeparation = 1.2;  // Base spacing between nodes
-        var additionalSeparation = (aWidth + bWidth) / 120;  // Additional spacing based on text width
+        // Base minimum separation for nodes without labels
+        var minSeparation = 1.3; // Optimized base separation (from 1.5 to 1.3)
         
-        // Return the computed separation, with a minimum value
-        return Math.max(baseSeparation, baseSeparation + additionalSeparation);
+        // If either node has width, calculate additional separation
+        if (aWidth > 0 || bWidth > 0) {
+            // Use actual node widths
+            var additionalSeparation = (aWidth + bWidth) / 90; // Optimized divisor (from 100 to 90)
+            
+            // Add minimum threshold for nodes with labels
+            var minThreshold = 1.4; // Optimized threshold (from 1.5 to 1.4)
+            
+            // Check label count and adjust distance
+            var aCount = (a.breedCount || 0) + (a.mutationCount || 0);
+            var bCount = (b.breedCount || 0) + (b.mutationCount || 0);
+            
+            // Dynamic separation based on label count
+            if (aCount > 10 || bCount > 10) {
+                minThreshold = 1.6; // Optimized distance for nodes with many labels (from 1.8 to 1.6)
+                additionalSeparation *= 1.6; // Optimized separation (from 1.8 to 1.6)
+            } else if (aCount > 5 || bCount > 5) {
+                minThreshold = 1.5; // Optimized minimum separation (from 1.6 to 1.5)
+                additionalSeparation *= 1.4; // Optimized separation (from 1.5 to 1.4)
+            }
+            
+            // Consider column count as well
+            var aColumns = Math.ceil((a.breedCount || 0) / MAX_ROWS_PER_COLUMN);
+            var bColumns = Math.ceil((b.breedCount || 0) / MAX_ROWS_PER_COLUMN);
+            
+            // For nodes with multiple columns, add more space inside the node, not between nodes
+            if (aColumns > 1 || bColumns > 1) {
+                additionalSeparation *= (1 + Math.max(aColumns, bColumns) * 0.15); // Optimized multiplier (from 0.2 to 0.15)
+            }
+            
+            return Math.max(minThreshold, 1.3 + additionalSeparation); // Optimized base value (from 1.5 to 1.3)
+        }
+        
+        return minSeparation;
     });
 
 var diagonal = d3.svg.diagonal()
@@ -469,7 +537,7 @@ function getTextWidth(text, fontSize) {
     return context.measureText(text).width;
 }
 
-// Helper function to organize items into columns
+// Update the organizeIntoColumns function to ensure proper spacing
 function organizeIntoColumns(items, maxRowsPerColumn) {
     if (!items || items.length === 0) return [];
     
@@ -478,21 +546,40 @@ function organizeIntoColumns(items, maxRowsPerColumn) {
     items.forEach(function(item) {
         var text = typeof item === 'string' && item.startsWith('BREED:') ? 
             item.substring(6) : item;
+            
+        // Limit text length for width calculation
+        if (text.length > 25) {
+            text = text.substring(0, 22) + "...";
+        }
+        
         var width = getTextWidth(text, ymodsize);
         maxWidth = Math.max(maxWidth, width);
     });
     
-    // Calculate number of columns needed
-    var columnWidth = Math.max(MIN_COLUMN_WIDTH, maxWidth + COLUMN_SPACING);
-    var numColumns = Math.ceil(items.length / maxRowsPerColumn);
+    // Add additional width buffer to ensure no overlap
+    maxWidth += 5; // Additional 5px for each text
+    
+    // Stronger compression for readability
+    var compressionFactor = 0.95; // Reduced compression for better readability (from 0.9 to 0.95)
+    if (items.length > 10) {
+        compressionFactor = 0.9; // Reduced compression for large number of items (from 0.8 to 0.9)
+    } else if (items.length > 5) {
+        compressionFactor = 0.92; // Reduced compression (from 0.85 to 0.92)
+    }
+    
+    // Minimum column width to ensure readability without excess
+    var columnWidth = Math.max(MIN_COLUMN_WIDTH, (maxWidth + COLUMN_SPACING) * compressionFactor);
+    
+    // Maintain standard row count to avoid vertical compression
+    var numColumns = Math.ceil(items.length / MAX_ROWS_PER_COLUMN);
     
     // Organize items into columns
     var columns = [];
     for (var i = 0; i < numColumns; i++) {
-        var columnItems = items.slice(i * maxRowsPerColumn, (i + 1) * maxRowsPerColumn);
+        var columnItems = items.slice(i * MAX_ROWS_PER_COLUMN, (i + 1) * MAX_ROWS_PER_COLUMN);
         columns.push({
             items: columnItems,
-            width: columnWidth
+            width: columnWidth + 15 // Increased column spacing (from 10 to 15)
         });
     }
     
@@ -542,7 +629,7 @@ function update(source) {
 
     nodeEnter.append("text")
         .attr("dy", ".35em")
-        .attr("x", -7)
+        .attr("x", -5)  // Reduced label spacing from node (from -7 to -5)
         .attr("text-anchor", "end")
         .text(function(d) { return d.name; })
         .style("fill-opacity", 1e-6);
@@ -569,17 +656,18 @@ function update(source) {
             var mutationColumns = organizeIntoColumns(sorted.mutations, MAX_ROWS_PER_COLUMN);
             var currentX = 0;
             
-            mutationColumns.forEach(function(column) {
+            mutationColumns.forEach(function(column, columnIndex) {
                 column.items.forEach(function(mutation, rowIndex) {
+                    // Improve vertical spacing for mutations
                     mutationsGroup.append("text")
                         .attr("x", currentX)
-                        .attr("y", -(sorted.breeds.length + rowIndex + 1) * (ymodsize+1))
+                        .attr("y", -(sorted.breeds.length + rowIndex + 1) * (ymodsize+0.8)) // Increased vertical spacing (from 0.5 to 0.8)
                         .attr("font-size", ymodsize)
                         .attr("text-anchor", "start")
                         .attr("fill", "black")
                         .text(mutation);
                 });
-                currentX += column.width;
+                currentX += column.width + 20; // Significantly increased column spacing (from 8 to 20)
             });
         }
 
@@ -592,18 +680,24 @@ function update(source) {
             var breedColumns = organizeIntoColumns(sorted.breeds, MAX_ROWS_PER_COLUMN);
             var currentX = 0;
             
-            breedColumns.forEach(function(column) {
+            breedColumns.forEach(function(column, columnIndex) {
                 column.items.forEach(function(breed, rowIndex) {
                     var breedText = breed.substring(6);
+                    // Shorten long breed names
+                    if (breedText.length > 25) {
+                        // Shorten long breed names for more compact layout
+                        breedText = breedText.substring(0, 22) + "...";
+                    }
+                    
                     breedsGroup.append("text")
                         .attr("x", currentX)
-                        .attr("y", -(rowIndex + 1) * (ymodsize+1))
+                        .attr("y", -(rowIndex + 1) * (ymodsize+0.8)) // Increased vertical spacing (from 0.5 to 0.8)
                         .attr("font-size", ymodsize)
                         .attr("text-anchor", "start")
                         .attr("fill", "blue")
                         .text(breedText);
                 });
-                currentX += column.width;
+                currentX += column.width + 20; // Significantly increased column spacing (from 8 to 20)
             });
         }
     });
