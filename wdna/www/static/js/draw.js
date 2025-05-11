@@ -476,7 +476,7 @@ function update(source) {
                 column.items.forEach(function(mutation, rowIndex) {
                     mutationsGroup.append("text")
                         .attr("x", currentX)
-                        .attr("y", -(sorted.breeds.length + rowIndex + 1) * ymodsize)
+                        .attr("y", -(sorted.breeds.length + rowIndex + 1) * (ymodsize+1))
                         .attr("font-size", ymodsize)
                         .attr("text-anchor", "start")
                         .attr("fill", "black")
@@ -499,7 +499,7 @@ function update(source) {
                 column.items.forEach(function(breed, rowIndex) {
                     breedsGroup.append("text")
                         .attr("x", currentX)
-                        .attr("y", -(rowIndex + 1) * ymodsize)
+                        .attr("y", -(rowIndex + 1) * (ymodsize+1))
                         .attr("font-size", ymodsize)
                         .attr("text-anchor", "start")
                         .attr("fill", "blue")
