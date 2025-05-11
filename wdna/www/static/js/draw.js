@@ -7,6 +7,7 @@ var root; // Add global root variable
 var MAX_ROWS_PER_COLUMN = 15; // Maximum number of items in a column
 var MIN_COLUMN_WIDTH = 20; // Minimum width for a column in pixels
 var COLUMN_SPACING = 10; // Spacing between columns in pixels
+var NODE_BASE_SEPARATION = 75; // Base separation between nodes
 
 function toggle() {
 	var ele = document.getElementById("toggleText");
@@ -25,17 +26,13 @@ function toggle() {
 function toggleMutations() {
     var checkbox = document.getElementById("toggle-mutations");
     showMutations = checkbox.checked;
-    if (root) {
-        update(root); // Update tree visualization
-    }
+    updateVisibilityAndLayout();
 }
 
 function toggleBreeds() {
     var checkbox = document.getElementById("toggle-breeds");
     showBreeds = checkbox.checked;
-    if (root) {
-        update(root);
-    }
+    updateVisibilityAndLayout();
 }
 
 function init_root(json_root, width){
@@ -54,6 +51,10 @@ function init_root(json_root, width){
         breedsCheckbox.checked = true;
     }
     
+    // Precalculate node widths for all nodes before first render
+    // This ensures proper spacing on initial layout
+    calculateAllNodeWidths(root);
+    
     update(root);
     
     // Scroll the tree container instead of the window
@@ -66,6 +67,71 @@ function init_root(json_root, width){
     }
 }
 
+// Add a new function to calculate node widths for all nodes
+function calculateAllNodeWidths(node) {
+    if (!node) return;
+    
+    // Process this node
+    calculateNodeWidth(node);
+    
+    // Process all children
+    if (node.children) {
+        node.children.forEach(calculateAllNodeWidths);
+    }
+    if (node._children) {
+        node._children.forEach(calculateAllNodeWidths);
+    }
+}
+
+// Function to calculate width for a single node
+function calculateNodeWidth(node) {
+    if (!node || !node.mods) return;
+    
+    var maxBreedsLength = 0;
+    var maxBreedTextWidth = 0;
+    var totalNodeWidth = 0;
+    
+    var sorted = sortMods(node.mods);
+    
+    // Calculate mutations width - only if they are visible
+    var mutationsTotalWidth = 0;
+    if (showMutations && sorted.mutations.length > 0) {
+        var mutationColumns = organizeIntoColumns(sorted.mutations, MAX_ROWS_PER_COLUMN);
+        var currentX = 0;
+        
+        mutationColumns.forEach(function(column) {
+            currentX += column.width;
+        });
+        mutationsTotalWidth = currentX;
+    }
+    
+    // Calculate breeds width - only if they are visible
+    var breedsTotalWidth = 0;
+    if (showBreeds && sorted.breeds.length > 0) {
+        var breedColumns = organizeIntoColumns(sorted.breeds, MAX_ROWS_PER_COLUMN);
+        var currentX = 0;
+        
+        breedColumns.forEach(function(column) {
+            column.items.forEach(function(breed) {
+                maxBreedsLength = Math.max(maxBreedsLength, breed.length);
+                var breedText = breed.substring(6);
+                var textWidth = getTextWidth(breedText, ymodsize);
+                maxBreedTextWidth = Math.max(maxBreedTextWidth, textWidth);
+            });
+            currentX += column.width;
+        });
+        breedsTotalWidth = currentX;
+    }
+    
+    // Calculate total node width
+    totalNodeWidth = Math.max(breedsTotalWidth, mutationsTotalWidth);
+    
+    // Store calculated values in the node
+    node.maxBreedsLength = maxBreedsLength;
+    node.maxBreedTextWidth = maxBreedTextWidth;
+    node.totalNodeWidth = totalNodeWidth;
+}
+
 // ************** Generate the tree diagram  *****************
 var margin = {top: 20, right: 0, bottom: 20, left: 20},
  width = 11000 - margin.right - margin.left,
@@ -75,8 +141,23 @@ var margin = {top: 20, right: 0, bottom: 20, left: 20},
 var i = 0,
     duration = 750;
 
+// Create tree layout with customized separation function
 var tree = d3.layout.tree()
-    .nodeSize([75,50]);
+    .nodeSize([75,50])
+    .separation(function(a, b) {
+        // Use the total node width for spacing calculation
+        var aWidth = a.totalNodeWidth || a.maxBreedTextWidth || 0;
+        var bWidth = b.totalNodeWidth || b.maxBreedTextWidth || 0;
+        
+        // Calculate minimum required separation based on node widths
+        // Division factor tuned for better visual result
+        var baseSeparation = 1.2;  // Base spacing between nodes
+        var additionalSeparation = (aWidth + bWidth) / 120;  // Additional spacing based on text width
+        
+        // Return the computed separation, with a minimum value
+        return Math.max(baseSeparation, baseSeparation + additionalSeparation);
+    });
+
 var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.x, d.y]; });
 
@@ -276,9 +357,6 @@ function augmentTreeWithSequences(node) {
   if (node.children) {
     node.children.forEach(augmentTreeWithSequences);
   }
-  if (node._children) {
-    node._children.forEach(augmentTreeWithSequences);
-  }
   
   // Find sequences that match this haplogroup exactly
   if (node.name) {
@@ -421,6 +499,23 @@ function organizeIntoColumns(items, maxRowsPerColumn) {
     return columns;
 }
 
+// Add this function to handle visibility changes and update tree layout
+function updateVisibilityAndLayout() {
+    // Update mutations visibility
+    svg.selectAll(".mutations-group")
+        .style("display", showMutations ? "block" : "none");
+
+    // Update breeds visibility
+    svg.selectAll(".breeds-group")
+        .style("display", showBreeds ? "block" : "none");
+    
+    // Recalculate all node widths with the new visibility settings
+    if (root) {
+        calculateAllNodeWidths(root);
+        update(root);
+    }
+}
+
 // Modify the update function to handle the new layout
 function update(source) {
     // Compute the new tree layout.
@@ -455,13 +550,15 @@ function update(source) {
     // Modify the mods group creation and handling
     var modsGroup = nodeEnter.append("g")
         .attr("class", "mods-group");
-
+  
     // Add breeds and mutations with column layout
     modsGroup.each(function(d) {
         if (!d.mods) return;
-        
         var sorted = sortMods(d.mods);
         var container = d3.select(this);
+        
+        // Recalculate node width to ensure it's up-to-date
+        calculateNodeWidth(d);
         
         // Handle mutations first (they go above breeds)
         var mutationsGroup = container.append("g")
@@ -497,19 +594,21 @@ function update(source) {
             
             breedColumns.forEach(function(column) {
                 column.items.forEach(function(breed, rowIndex) {
+                    var breedText = breed.substring(6);
                     breedsGroup.append("text")
                         .attr("x", currentX)
                         .attr("y", -(rowIndex + 1) * (ymodsize+1))
                         .attr("font-size", ymodsize)
                         .attr("text-anchor", "start")
                         .attr("fill", "blue")
-                        .text(breed.substring(6));
+                        .text(breedText);
                 });
                 currentX += column.width;
             });
         }
     });
-
+   
+    
     // Transition nodes to their new position.
     var nodeUpdate = node.transition()
         .duration(duration)
@@ -539,16 +638,10 @@ function update(source) {
 
     // Update mutations and breeds visibility in the transition
     nodeUpdate.selectAll(".mutations-group")
-        .style("display", function() {
-            console.log('Updating mutations visibility:', showMutations); // Debug log
-            return showMutations ? null : "none";
-        });
+        .style("display", showMutations ? "block" : "none");
 
     nodeUpdate.selectAll(".breeds-group")
-        .style("display", function() {
-            console.log('Updating breeds visibility:', showBreeds); // Debug log
-            return showBreeds ? null : "none";
-        });
+        .style("display", showBreeds ? "block" : "none");
 
     // Transition exiting nodes to the parent's new position.
     var nodeExit = node.exit().transition()
@@ -593,13 +686,6 @@ function update(source) {
         d.x0 = d.x;
         d.y0 = d.y;
     });
-
-    // Update mutations visibility
-    svg.selectAll(".mutations-group")
-        .style("display", showMutations ? "block" : "none");
-
-    svg.selectAll(".breeds-group")
-        .style("display", showBreeds ? "block" : "none");
 }
 
 function hide(d, all){
