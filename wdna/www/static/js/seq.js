@@ -32,6 +32,9 @@ function init_seq(){
             caption: "Database of Canis lupus familiaris mtDNA sequences",
             height: "auto",
             ignoreCase: true,
+            shrinkToFit: false,
+            autowidth: true,
+            width: 1600,
             loadComplete: function() {
                 $(this).trigger('jqGridLoadComplete');
             },

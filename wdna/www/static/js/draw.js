@@ -474,10 +474,14 @@ function augmentTreeWithSequences(node) {
           if (!node.mods) node.mods = [];
           // Remove any existing entry for this breed
           node.mods = node.mods.filter(function(mod) {
-            return typeof mod !== 'string' || !mod.startsWith("BREED:" + breed + " (");
+            return typeof mod !== 'string' || !mod.startsWith("BREED:" + breed);
           });
-          // Add new entry with updated count
-          node.mods.push("BREED:" + breed + " (" + node.breedCounts[breed] + ")");
+          // Add new entry with updated count, only show count if > 1, use ' xN' notation
+          var breedLabel = breed;
+          if (node.breedCounts[breed] > 1) {
+            breedLabel += " (" + node.breedCounts[breed] + ")";
+          }
+          node.mods.push("BREED:" + breedLabel);
         }
       }
     });
@@ -548,9 +552,9 @@ function organizeIntoColumns(items, maxRowsPerColumn) {
             item.substring(6) : item;
             
         // Limit text length for width calculation
-        if (text.length > 25) {
-            text = text.substring(0, 22) + "...";
-        }
+        // if (text.length > 25) {
+        //     text = text.substring(0, 22) + "...";
+        // }
         
         var width = getTextWidth(text, ymodsize);
         maxWidth = Math.max(maxWidth, width);
@@ -683,12 +687,6 @@ function update(source) {
             breedColumns.forEach(function(column, columnIndex) {
                 column.items.forEach(function(breed, rowIndex) {
                     var breedText = breed.substring(6);
-                    // Shorten long breed names
-                    if (breedText.length > 25) {
-                        // Shorten long breed names for more compact layout
-                        breedText = breedText.substring(0, 22) + "...";
-                    }
-                    
                     breedsGroup.append("text")
                         .attr("x", currentX)
                         .attr("y", -(rowIndex + 1) * (ymodsize+0.8)) // Increased vertical spacing (from 0.5 to 0.8)

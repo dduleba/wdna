@@ -36,7 +36,11 @@
         #table-container {
           margin-bottom: 20px;
           transition: max-height 0.3s ease-in-out;
-          overflow: hidden;
+          overflow-x: auto;
+          overflow-y: hidden;
+          width: 100%;
+          max-width: 100vw; /* Maksymalna szerokość widoku */
+          position: relative;
         }
         #controls-panel {
           position: fixed;
@@ -121,6 +125,11 @@
           padding: 2px 6px;
           font-size: 12px;
         }
+        /* Style dla tabeli jqGrid - zapewni, że jest przewijalna */
+        #sequences {
+          width: 100%;
+          min-width: 1000px; /* Minimalna szerokość tabeli, aby wymuszić pasek przewijania */
+        }
        </style>
        
     <!-- table -->
@@ -186,6 +195,19 @@
                     toggleBreeds();
                 }
             });
+            
+            // Dodajemy obsługę zmiany rozmiaru okna
+            $(window).resize(function() {
+                // Dodajemy opóźnienie, aby nie wykonywać zbyt wielu operacji podczas zmiany rozmiaru
+                clearTimeout(this.resizeTimer);
+                this.resizeTimer = setTimeout(function() {
+                    // Dostosuj szerokość tabeli jeśli to konieczne
+                    var gridWidth = $("#sequences").closest(".ui-jqgrid").parent().width();
+                    if (gridWidth > 0) {
+                        $("#sequences").jqGrid("setGridWidth", Math.max(1000, gridWidth));
+                    }
+                }, 200);
+            }).resize(); // Wywołaj od razu po załadowaniu strony
         });
     </script>
 </head>
