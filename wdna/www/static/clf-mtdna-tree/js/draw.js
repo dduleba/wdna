@@ -244,16 +244,26 @@ var pageHeight = Math.max(
 
 // Add function to update SVG height based on table visibility
 function updateTreeContainerHeight(isTableHidden) {
-    var pageHeight = Math.max(
-        document.documentElement.clientHeight,
-        document.documentocument.documeElement.offsetHeight
-    );
-  
-    var tableHeight = document.getElementById('table-container').offsetHeight || 70;
-    var margins = margin.top + margin.bottom;
-    var newHeight = isTableHidden ? (pageHeight - margins - 70) : Math.max(pageHeight - margins - tableHeight, pageHeight - margins- 820);
-    console.log('newHeight', newHeight, 'pageHeight', pageHeight, 'margins', margins, 'tableHeight', tableHeight, 'scrollHeight', document.documentElement.scrollHeight);
-    outerSvg.attr("height", newHeight);
+    try {
+        var pageHeight = Math.max(
+            document.documentElement.clientHeight || 0,
+            document.documentElement.offsetHeight || 0
+        );
+
+        var tableContainer = document.getElementById('table-container');
+        if (!tableContainer) return;
+        
+        var tableHeight = tableContainer.offsetHeight || 70;
+        var margins = margin.top + margin.bottom;
+        var newHeight = isTableHidden ? (pageHeight - margins - 70) : Math.max(pageHeight - margins - tableHeight, pageHeight - margins - 820);
+        
+        if (outerSvg && newHeight > 0) {
+            console.log('newHeight', newHeight, 'pageHeight', pageHeight, 'margins', margins, 'tableHeight', tableHeight, 'scrollHeight', document.documentElement.scrollHeight);
+            outerSvg.attr("height", newHeight);
+        }
+    } catch (error) {
+        console.warn('Error updating tree container height:', error);
+    }
 }
 
 // Create outer SVG container that will handle zooming
