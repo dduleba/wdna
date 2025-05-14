@@ -1,0 +1,76 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="author" content="Dariusz Duleba">
+	<title>Canis lupus familiaris mtDNA</title>
+	<link rel="stylesheet" type="text/css" media="screen" href="data/layout.css">
+</head>
+<body >
+<script language="javascript">
+function toggle() {
+	var ele = document.getElementById("toggleText");
+	var text = document.getElementById("displayText");
+	if(ele.style.display == "block") {
+    		ele.style.display = "none";
+		text.innerHTML = "History >";
+  	}
+	else {
+		ele.style.display = "block";
+		text.innerHTML = "History <";
+	}
+}
+</script>
+<div class=wrapper>
+<div class=span>
+<span >
+<img class=logo src="data/logo.gif" />
+<h2 align=center>
+Phylogenetic mitochondrial DNA tree of <i>Canis lupus familiaris</i></h2>
+</span>
+</div>
+<center>
+<div align=center style="width: 800px; border:1px solid green; 
+padding: 10px 10px 10px 10px; margin-left:auto; margin-right:auto; margin-top: 50px; border-radius: 25px; overflow:auto;">
+Here we provide a phylogenetic mitochondrial DNA tree derived from 831 complete mitochondrial genome sequences of <i>Canis lupus familiaris</i>.
+</div>
+</center>
+
+<div class=content>
+
+<a href="svgtree.html" title="A phylogenetic tree of all complete mtDNA sequences was constructed excluding repetitive and difficult to align regions: 5444, 15510-15532, 16040-16550, 16661-16674. Mutations in positions 1493, 15938 and 16025 were added manualy as private mutations.
+">mtDNA <i>Canis lupus familiaris</i> tree</a>
+	released 17.05.2018<br>
+<a href="mtdna.html" title="A phylogenetic tree of all complete mtDNA sequences was constructed excluding repetitive and difficult to align regions: 5444, 15510-15532, 16040-16550, 16661-16674. Additional mutations in positions 1493, 15938 and 16025 were ignored and deleted from the tree.">Simplified mtDNA <i>Canis lupus familiaris</i> tree</a>
+	released 17.05.2018
+<br>
+<a href="sequences.html">Database of <i>Canis lupus familiaris</i> mtDNA sequences</a>
+	<br>
+<a href="sequences-mtdna.html">Database of <i>Canis lupus familiaris</i> mtDNA sequences with dynamic phylogenetic tree visualization</a>
+	<br>
+
+
+	<a id="displayText" href="javascript:toggle();">History ></a>
+<div id="toggleText" style="display: none; margin-left:45px">
+		<a href="svgtree_15.04.2015.html">mtDNA <i>Canis lupus familiaris</i> tree</a> released 15.04.2015<br>
+	</div>
+<h3> Additional resources</h3>
+<i>Canis lupus familiaris</i> mtDNA reference sequence(GenBank accession number: <a href="http://www.ncbi.nlm.nih.gov/nuccore/7534303">U96639.2</a>)
+</div>
+
+<div class="push"></div>
+</div>
+<div class=footer>
+<hr>
+Contact person:<br>
+prof. Tomasz Grzybowski (<a href='mailto:tgrzyb@cm.umk.pl'>tgrzyb@cm.umk.pl</a>)<br>
+Department of Forensic and Molecular Genetics<br>
+Institute of Forensic Medicine<br>
+Ludwik Rydygier Collegium Medicum<br>
+Nicolaus Copernicus University<br>
+Bydgoszcz, Poland<br>
+</div>
+
+</body>
+</html>
