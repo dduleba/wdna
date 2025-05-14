@@ -1,6 +1,8 @@
 from io import StringIO, BytesIO
+import os
+import zipfile
 
-from flask import Flask, request, render_template, Response, jsonify, Blueprint
+from flask import Flask, request, render_template, Response, jsonify, Blueprint, send_file
 
 from wdna.phylotree.parse_html import get_phylo_mapping
 from wdna.tools.genmapper_to_dnastat import convert_genmap_to_dnastat
@@ -119,6 +121,21 @@ def return_converted_report():
     w = bytes_stream
     res = Response(w, mimetype='text/csv', direct_passthrough=True)
     return res
+
+
+@bp_wdna.route('/wdna/download_project_zip')
+def download_project_zip():
+    # Path to the clf-mtdna-tree directory
+    tree_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static/clf-mtdna-tree'))
+    memory_file = BytesIO()
+    with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for root, dirs, files in os.walk(tree_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arcname = os.path.relpath(file_path, tree_dir)
+                zf.write(file_path, arcname)
+    memory_file.seek(0)
+    return send_file(memory_file, mimetype='application/zip', as_attachment=True, download_name='clf-mtdna-tree.zip')
 
 
 app = Flask(__name__)
