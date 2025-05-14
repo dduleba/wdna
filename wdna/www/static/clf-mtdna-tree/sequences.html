@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0047)https://clf-mtdna-tree.cm.umk.pl/sequences.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Database of Canis lupus familiaris mtDNA sequences with dynamic tree visualization</title>
+    
+    <meta name="author" content="Dariusz Duleba">
+    
+    <!-- table css -->
+    <link rel="stylesheet" type="text/css" href="js/jquery-ui-1.11.1.redmond/jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="js/jquery/css/ui.jqgrid.css" />
+    
+    <!-- tree css -->
+    <link rel="stylesheet" type="text/css" media="screen" href="data/layout.css">
+    <style>
+        .node circle {
+          fill: #fff;
+          stroke: steelblue;
+          stroke-width: 3px;
+        }
+        .node text { font: 12px sans-serif; }
+        .node {
+         cursor: pointer;
+        }
+        .link {
+          fill: none;
+          stroke: #ccc;
+          stroke-width: 2px;
+        }
+        #tree-container {
+          margin-top: 30px;
+          width: 100%;
+          overflow-x: auto;
+          overflow-y: auto;
+          position: relative;
+        }
+        #table-container {
+          margin-bottom: 20px;
+          transition: max-height 0.3s ease-in-out;
+          overflow-x: auto;
+          overflow-y: hidden;
+          width: 100%;
+          max-width: 100vw; /* Maksymalna szerokość widoku */
+          position: relative;
+        }
+        #controls-panel {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: white;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          padding: 10px;
+          z-index: 1000;
+        }
+        .controls-container {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+        .control-section {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .control-section:not(:last-child) {
+          border-right: 1px solid #eee;
+          padding-right: 15px;
+        }
+        .control-section h3 {
+          font-size: 12px;
+          margin: 0;
+          color: #666;
+          font-weight: normal;
+        }
+        #toggleText {
+          position: absolute;
+          bottom: 100%;
+          right: 0;
+          margin-bottom: 10px;
+          background: white;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          padding: 10px;
+          font-size: 11px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          min-width: 200px;
+          display: none;
+        }
+        #toggleText p {
+          margin: 0 0 8px 0;
+        }
+        #toggleText img {
+          vertical-align: middle;
+          margin-right: 5px;
+        }
+        .legend-item {
+          display: flex;
+          align-items: center;
+          margin: 3px 0;
+          white-space: nowrap;
+        }
+        button {
+          padding: 4px 8px;
+          cursor: pointer;
+        }
+        .checkbox-label {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          cursor: pointer;
+          user-select: none;
+          white-space: nowrap;
+          font-size: 12px;
+          color: #333;
+        }
+        .checkbox-label input[type="checkbox"] {
+          margin: 0;
+        }
+        .zoom-controls {
+          display: flex;
+          gap: 3px;
+        }
+        .zoom-controls button {
+          padding: 2px 6px;
+          font-size: 12px;
+        }
+        /* Style dla tabeli jqGrid - zapewni, że jest przewijalna */
+        #sequences {
+          width: 100%;
+          min-width: 1000px; /* Minimalna szerokość tabeli, aby wymuszić pasek przewijania */
+        }
+       </style>
+       
+    <!-- table -->
+    <script type="text/javascript" src="js/jquery/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.11.1.redmond/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/jquery/i18n/grid.locale-en.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="js/seq.js"></script>
+    <script src="js/d3.min.js"></script>
+    <script type="text/javascript">
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+    
+        $(document).ready(function () {
+            init_seq();
+            
+            $(window).resize(function() {
+                // Dodajemy opóźnienie, aby nie wykonywać zbyt wielu operacji podczas zmiany rozmiaru
+                clearTimeout(this.resizeTimer);
+                this.resizeTimer = setTimeout(function() {
+                    // Dostosuj szerokość tabeli jeśli to konieczne
+                    var gridWidth = $("#sequences").closest(".ui-jqgrid").parent().width();
+                    if (gridWidth > 0) {
+                        $("#sequences").jqGrid("setGridWidth", Math.max(1000, gridWidth));
+                    }
+                }, 200);
+            }).resize(); // Wywołaj od razu po załadowaniu strony
+        });
+    </script>
+</head>
+<body>
+    <div id="table-container" style="max-height: none;">
+        <table id="sequences"><tr><td/></tr></table>
+        <div id="sequencePager"></div>
+    </div>
+
+</body>
+</html>
