@@ -57,6 +57,10 @@ function init_root(json_root, width){
     
     update(root);
     
+    // Set initial tree container height based on table visibility
+    var tableToggle = document.getElementById("toggle-table");
+    updateTreeContainerHeight(!tableToggle || !tableToggle.checked);
+    
     // Scroll the tree container instead of the window
     var treeContainer = document.getElementById("tree-container");
     var scrollPosition = width*5/6 - window.innerWidth/2;
@@ -228,11 +232,34 @@ var tree = d3.layout.tree()
 
 var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.x, d.y]; });
+// Get page height
+var pageHeight = Math.max(
+    document.documentElement.clientHeight,
+    document.documentElement.scrollHeight,
+    document.documentElement.offsetHeight
+);
+
+// Get table container height
+// var tableHeight = document.getElementById('table-container').offsetHeight || 0;
+
+// Add function to update SVG height based on table visibility
+function updateTreeContainerHeight(isTableHidden) {
+    var pageHeight = Math.max(
+        document.documentElement.clientHeight,
+        document.documentocument.documeElement.offsetHeight
+    );
+  
+    var tableHeight = document.getElementById('table-container').offsetHeight || 70;
+    var margins = margin.top + margin.bottom;
+    var newHeight = isTableHidden ? (pageHeight - margins - 70) : Math.max(pageHeight - margins - tableHeight, pageHeight - margins- 820);
+    console.log('newHeight', newHeight, 'pageHeight', pageHeight, 'margins', margins, 'tableHeight', tableHeight, 'scrollHeight', document.documentElement.scrollHeight);
+    outerSvg.attr("height", newHeight);
+}
 
 // Create outer SVG container that will handle zooming
 var outerSvg = d3.select("#tree-container").append("svg")
     .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom);
+    .attr("height", pageHeight * 0.5);
 
 // Add a background rect to catch zoom events
 outerSvg.append("rect")
@@ -881,3 +908,15 @@ function expandAll(node) {
     node.children.forEach(expandAll);
   }
 }
+
+// Table visibility toggle
+$("#toggle-table").change(function() {
+    var container = $("#table-container");
+    if (this.checked) {
+        container.css("max-height", container[0].scrollHeight + "px");
+        updateTreeContainerHeight(false);
+    } else {
+        container.css("max-height", "70px");
+        updateTreeContainerHeight(true);
+    }
+});

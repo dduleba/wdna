@@ -148,6 +148,13 @@
             
             $("#sequences").on('jqGridLoadComplete', function() {
                 loadTreeData();
+                // Update tree height after grid loads
+                setTimeout(function() {
+                    if (typeof updateTreeContainerHeight === 'function') {
+                        var tableToggle = document.getElementById("toggle-table");
+                        updateTreeContainerHeight(!tableToggle || !tableToggle.checked);
+                    }
+                }, 100);
             });
             
             $("#sequences").on('jqGridToolbarFilterClicked', function() {
@@ -171,8 +178,20 @@
                 var container = $("#table-container");
                 if (this.checked) {
                     container.css("max-height", container[0].scrollHeight + "px");
+                    // Wait for transition to complete before updating tree height
+                    setTimeout(function() {
+                        if (typeof updateTreeContainerHeight === 'function') {
+                            updateTreeContainerHeight(false);
+                        }
+                    }, 300); // 300ms matches the transition duration
                 } else {
                     container.css("max-height", "70px");
+                    // Wait for transition to complete before updating tree height
+                    setTimeout(function() {
+                        if (typeof updateTreeContainerHeight === 'function') {
+                            updateTreeContainerHeight(true);
+                        }
+                    }, 300); // 300ms matches the transition duration
                 }
             });
 
@@ -205,6 +224,11 @@
                     var gridWidth = $("#sequences").closest(".ui-jqgrid").parent().width();
                     if (gridWidth > 0) {
                         $("#sequences").jqGrid("setGridWidth", Math.max(1000, gridWidth));
+                        // Update tree height after grid resize
+                        if (typeof updateTreeContainerHeight === 'function') {
+                            var tableToggle = document.getElementById("toggle-table");
+                            updateTreeContainerHeight(!tableToggle || !tableToggle.checked);
+                        }
                     }
                 }, 200);
             }).resize(); // Wywołaj od razu po załadowaniu strony
