@@ -29,7 +29,7 @@ function init_seq(){
             },
             rowNum: 25,
             viewrecords: true,
-            caption: "Database of Canis lupus familiaris mtDNA sequences with dynamic tree visualization",
+            caption: "Breed explorer",
             height: "auto",
             ignoreCase: true,
             shrinkToFit: false,
