@@ -86,6 +86,26 @@
           box-shadow: 0 2px 5px rgba(0,0,0,0.1);
           min-width: 200px;
           display: none;
+          z-index: 1001;
+        }
+        #description {
+          position: fixed;
+          bottom: 90px;
+          right: 20px;
+          background: white;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          padding: 10px;
+          font-size: 11px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          min-width: 200px;
+          max-width: 400px;
+          display: none;
+          line-height: 1.4;
+          z-index: 1001;
+        }
+        #description p {
+          margin: 0 0 8px 0;
         }
         #toggleText p {
           margin: 0 0 8px 0;
@@ -199,6 +219,20 @@
             $("#toggle-legend").change(function() {
                 var legend = $("#toggleText");
                 legend.css("display", this.checked ? "block" : "none");
+                if (this.checked) {
+                    legend.css("z-index", 1002);
+                    $("#description").css("z-index", 1001);
+                }
+            });
+
+            // Description visibility toggle
+            $("#toggle-description").change(function() {
+                var description = $("#description");
+                description.css("display", this.checked ? "block" : "none");
+                if (this.checked) {
+                    description.css("z-index", 1002);
+                    $("#toggleText").css("z-index", 1001);
+                }
             });
 
             // Mutations visibility toggle
@@ -271,6 +305,18 @@
               </div>
         </div>
 
+        <div id="description">
+            <p>Breed names in the "Group," "Section," and "Subsection" columns follow FCI classification.</p>
+            <p>Breed names reflect information provided in the source publication and/or GenBank (NCBI) database.</p>
+            <p>Any inconsistencies with FCI classification are annotated in the "Comments" column.</p>
+            <p>Parental breeds (whenever available) are indicated in the "Comments" column.</p>
+            <p>All columns in the "Breed Explorer" table are sortable.</p>
+            <p>Clicking the magnifying glass in the last row of the "Breed Explorer" table enables advanced search.</p>
+            <p>The number of visible rows in the "Breed Explorer" table can be adjusted via the selector on the right side of the pagination bar.</p>
+            <p>The "Breed Explorer" table can be shown/hidden via the arrow in the top-right corner.</p>
+            <p>Legend, haplogroup specific mutations, and breed data on the tree can be toggled via checkboxes in the bottom-right panel; "RESET" restores the tree to its original state.</p>
+        </div>
+
         <div class="controls-container">
             <div class="control-section">
                 <h3>View:</h3>
@@ -289,6 +335,10 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="toggle-legend">
                     Legend
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="toggle-description">
+                    Description
                 </label>
             </div>
             
