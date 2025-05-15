@@ -6,6 +6,8 @@ function init_seq(){
                 url: "data/sequences.json",
                 datatype: "json",
                 loadonce: true,
+                rowNum: 5,
+                rowList: [5, 10, 15, 20, 25],
             colModel: [
                 { key:true, name: 'GenBank accession number', index: 'GenBank accession number', width: "100" , 
                     formatter: 'showlink', formatoptions: {baseLinkUrl:'http://www.ncbi.nlm.nih.gov/nuccore/',idName:'term'}},
@@ -27,14 +29,11 @@ function init_seq(){
                 root: function(obj) { return obj; },
                 id: "GenBank accession number"
             },
-            rowNum: 25,
             viewrecords: true,
             caption: "Database of Canis lupus familiaris mtDNA sequences with dynamic tree visualization",
             height: "auto",
             ignoreCase: true,
-            shrinkToFit: false,
-            autowidth: true,
-            width: 1600,
+            
             loadComplete: function() {
                 $(this).trigger('jqGridLoadComplete');
             },
