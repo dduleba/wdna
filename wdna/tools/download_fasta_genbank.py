@@ -9,7 +9,6 @@ import sys
 import time
 import argparse
 import requests
-import csv
 import urllib3
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
@@ -18,6 +17,12 @@ from pathlib import Path
 from curlify import to_curl
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
+
+# Import metadata extraction functionality
+try:
+    from .csv_metadata_extractor import MetadataExtractor
+except ImportError:
+    from csv_metadata_extractor import MetadataExtractor
 
 
 class GenBankDownloader:
@@ -41,9 +46,8 @@ class GenBankDownloader:
         import urllib3
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         
-        # Data storage
-        self.dog_data = []
-        self.lock = threading.Lock()  # For thread-safe data access
+        # Initialize metadata extractor for CSV functionality
+        self.metadata_extractor = MetadataExtractor(output_dir, verbose, max_workers)
         
     def _log_request(self, response, request_type="GET"):
         """Log the request details for debugging."""
@@ -53,12 +57,8 @@ class GenBankDownloader:
         try:
             curl_command = to_curl(response.request)
             print(f"\n=== {request_type} REQUEST ===")
-            print(f"URL: {response.url}")
-            print(f"Status: {response.status_code}")
-            print(f"Headers: {dict(response.request.headers)}")
-            print(f"cURL equivalent:")
+            print(f"URL: {response.url} Status: {response.status_code}")
             print(curl_command)
-            print(f"Response length: {len(response.content)} bytes")
             print("=" * 50)
         except Exception as e:
             print(f"Error logging request: {e}")
@@ -74,6 +74,7 @@ class GenBankDownloader:
         retstart = 0
         consecutive_empty_pages = 0
         max_empty_pages = 3
+        total_skipped = 0
         
         term = 'Canis lupus familiaris[Organism] AND mitochondrion[All Fields] AND 16500:17000[Sequence Length]'
         
@@ -113,6 +114,7 @@ class GenBankDownloader:
                     if self.skip_existing and fasta_file.exists():
                         print(f"  Skipping existing: {accession}.fasta")
                         page_skipped += 1
+                        total_skipped += 1
                         continue
                     
                     # Download FASTA file
@@ -126,7 +128,7 @@ class GenBankDownloader:
                         print(f"  Failed to download: {accession}")
                 
                 print(f"Page {page} results: {len(page_accessions)} accessions, {page_downloaded} downloaded, {page_skipped} skipped")
-                print(f"Total downloaded so far: {len(all_accessions)}")
+                print(f"Total downloaded so far: {len(all_accessions)}, {total_skipped} skipped")
             
             # Next page
             page += 1
@@ -134,7 +136,7 @@ class GenBankDownloader:
             time.sleep(0.5)  # Rate limiting between pages
         
         print(f"\n=== Search completed ===")
-        print(f"Total sequences downloaded: {len(all_accessions)}")
+        print(f"Total sequences downloaded: {len(all_accessions)}, {total_skipped} skipped")
         return all_accessions[:max_results]
     
     def download_fasta_files_only(self, accessions, max_sequences=None):
@@ -573,186 +575,15 @@ class GenBankDownloader:
     
     def get_biosample_info(self, accession):
         """Get BioSample information for breed and origin."""
-        # Clean accession number (remove any query parameters)
-        clean_accession = accession.split('?')[0]
-        
-        # First get the main sequence page
-        sequence_url = f"{self.base_url}/nuccore/{clean_accession}"
-        
-        try:
-            response = self.session.get(sequence_url)
-            response.raise_for_status()
-            
-            # Log the request for debugging
-            self._log_request(response, f"SEQUENCE_PAGE_{clean_accession}")
-            
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Look for BioSample link
-            biosample_link = soup.find('a', href=re.compile(r'/biosample/[A-Z0-9]+'))
-            
-            if biosample_link:
-                biosample_url = urljoin(self.base_url, biosample_link['href'])
-                return self._parse_biosample_page(biosample_url)
-            else:
-                return {'breed': 'Unknown', 'origin': 'Unknown', 'provider': 'Unknown'}
-                
-        except requests.RequestException as e:
-            print(f"Error getting BioSample info for {clean_accession}: {e}")
-            return {'breed': 'Unknown', 'origin': 'Unknown', 'provider': 'Unknown'}
-    
-    def _parse_biosample_page(self, biosample_url):
-        """Parse BioSample page for breed and origin information."""
-        try:
-            response = self.session.get(biosample_url)
-            response.raise_for_status()
-            
-            # Log the request for debugging
-            self._log_request(response, f"BIOSAMPLE_PAGE_{biosample_url.split('/')[-1]}")
-            
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            breed = 'Unknown'
-            origin = 'Unknown'
-            provider = 'Unknown'
-            
-            page_text = soup.get_text()
-            
-            # Look for breed information - more comprehensive patterns
-            breed_patterns = [
-                r'breed[:\s]+([^,\n\r]+)',
-                r'strain[:\s]+([^,\n\r]+)',
-                r'isolate[:\s]+([^,\n\r]+)',
-                r'organism[:\s]+([^,\n\r]+)',
-                r'host[:\s]+([^,\n\r]+)'
-            ]
-            
-            for pattern in breed_patterns:
-                match = re.search(pattern, page_text, re.IGNORECASE)
-                if match:
-                    breed = match.group(1).strip()
-                    # Clean up breed name
-                    breed = re.sub(r'[^\w\s\-]', '', breed).strip()
-                    if breed and breed.lower() not in ['unknown', 'not specified', 'n/a']:
-                        break
-            
-            # Look for origin/location information - more comprehensive patterns
-            origin_patterns = [
-                r'country[:\s]+([^,\n\r]+)',
-                r'location[:\s]+([^,\n\r]+)',
-                r'geographic[:\s]+([^,\n\r]+)',
-                r'collected[:\s]+([^,\n\r]+)',
-                r'isolation[:\s]+([^,\n\r]+)',
-                r'source[:\s]+([^,\n\r]+)'
-            ]
-            
-            for pattern in origin_patterns:
-                match = re.search(pattern, page_text, re.IGNORECASE)
-                if match:
-                    origin = match.group(1).strip()
-                    # Clean up origin name
-                    origin = re.sub(r'[^\w\s\-]', '', origin).strip()
-                    if origin and origin.lower() not in ['unknown', 'not specified', 'n/a']:
-                        break
-            
-            # Look for provider information - more comprehensive patterns
-            provider_patterns = [
-                r'provider[:\s]+([^,\n\r]+)',
-                r'submitter[:\s]+([^,\n\r]+)',
-                r'contact[:\s]+([^,\n\r]+)',
-                r'organization[:\s]+([^,\n\r]+)',
-                r'institution[:\s]+([^,\n\r]+)',
-                r'biomaterial[:\s]+([^,\n\r]+)'
-            ]
-            
-            for pattern in provider_patterns:
-                match = re.search(pattern, page_text, re.IGNORECASE)
-                if match:
-                    provider = match.group(1).strip()
-                    # Clean up provider name
-                    provider = re.sub(r'[^\w\s\-]', '', provider).strip()
-                    if provider and provider.lower() not in ['unknown', 'not specified', 'n/a']:
-                        break
-            
-            # Save BioSample HTML for debugging if verbose
-            if self.verbose:
-                biosample_file = self.output_dir / f"biosample_{biosample_url.split('/')[-1]}.html"
-                with open(biosample_file, 'w', encoding='utf-8') as f:
-                    f.write(soup.prettify())
-                print(f"Saved BioSample HTML to: {biosample_file}")
-            
-            return {
-                'breed': breed,
-                'origin': origin,
-                'provider': provider
-            }
-            
-        except requests.RequestException as e:
-            print(f"Error parsing BioSample page: {e}")
-            return {'breed': 'Unknown', 'origin': 'Unknown', 'provider': 'Unknown'}
+        return self.metadata_extractor.get_biosample_info(accession)
     
     def process_sequences(self, accessions, max_sequences=None):
         """Process all sequences and download FASTA files with metadata."""
-        if max_sequences:
-            accessions = accessions[:max_sequences]
-        
-        total = len(accessions)
-        print(f"Processing {total} sequences for BioSample information...")
-        
-        def process_single_sequence(accession):
-            """Process a single sequence to get BioSample information."""
-            # Check if FASTA file exists
-            fasta_file = self.output_dir / f"{accession}.fasta"
-            if not fasta_file.exists():
-                print(f"Warning: FASTA file not found for {accession}, skipping BioSample info")
-                return None
-            
-            # Get BioSample information
-            biosample_info = self.get_biosample_info(accession)
-            
-            # Store data thread-safely
-            with self.lock:
-                self.dog_data.append({
-                    'accession': accession,
-                    'fasta_file': str(fasta_file),
-                    'breed': biosample_info['breed'],
-                    'origin': biosample_info['origin'],
-                    'provider': biosample_info['provider']
-                })
-            
-            print(f"Processed BioSample info for: {accession}")
-            return accession
-        
-        # Use threading for BioSample information gathering
-        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            future_to_acc = {executor.submit(process_single_sequence, acc): acc for acc in accessions}
-            
-            completed = 0
-            for future in as_completed(future_to_acc):
-                result = future.result()
-                if result:
-                    completed += 1
-                    if completed % 10 == 0:
-                        print(f"Progress: {completed}/{total} ({completed/total*100:.1f}%)")
+        return self.metadata_extractor.process_sequences(accessions, max_sequences)
     
     def save_metadata_to_csv(self, filename="dog_sequences_metadata.csv"):
         """Save metadata to CSV file."""
-        if not self.dog_data:
-            print("No data to save")
-            return
-        
-        csv_file = self.output_dir / filename
-        
-        with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-            fieldnames = ['accession', 'fasta_file', 'breed', 'origin', 'provider']
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            
-            writer.writeheader()
-            for row in self.dog_data:
-                writer.writerow(row)
-        
-        print(f"Metadata saved to: {csv_file}")
-        print(f"Total sequences processed: {len(self.dog_data)}")
+        return self.metadata_extractor.save_metadata_to_csv(filename)
     
     def run(self, max_sequences=None):
         """Main method to run the downloader."""
@@ -779,7 +610,7 @@ class GenBankDownloader:
         # Save metadata
         self.save_metadata_to_csv()
         
-        print(f"Download completed! {len(self.dog_data)} sequences processed.")
+        print(f"Download completed! {len(self.metadata_extractor.sequence_data)} sequences processed.")
 
 
 def main():
@@ -818,8 +649,36 @@ def main():
         action='store_true',
         help='Download only FASTA files without BioSample information'
     )
+    parser.add_argument(
+        '--metadata-only',
+        action='store_true',
+        help='Extract metadata only for existing FASTA files (no downloading)'
+    )
+    parser.add_argument(
+        '--accessions-file',
+        help='File containing accession numbers for metadata extraction (one per line)'
+    )
     
     args = parser.parse_args()
+    
+    # Handle metadata-only mode
+    if args.metadata_only:
+        if not args.accessions_file:
+            print("Error: --metadata-only requires --accessions-file")
+            return
+        
+        # Read accessions from file
+        with open(args.accessions_file, 'r') as f:
+            accessions = [line.strip() for line in f if line.strip()]
+        
+        # Create extractor and run metadata extraction only
+        extractor = MetadataExtractor(
+            args.output_dir, 
+            verbose=args.verbose,
+            max_workers=args.max_workers
+        )
+        extractor.extract_metadata_only(accessions, args.max_sequences)
+        return
     
     # Create downloader and run
     downloader = GenBankDownloader(
