@@ -95,7 +95,7 @@
 
     <script src="js/jquery/jquery-1.11.1.min.js"></script>
     <script src="js/d3.min.js"></script>
-    <script src="js/draw.js"></script>
+    <script src="js/haplogroup_finder.js"></script>
     <script>
         function checkMutations() {
             var mutationsInput = document.getElementById('mutations').value.trim();
@@ -131,20 +131,36 @@
                         showError('Error loading tree data: ' + error);
                         return;
                     }
+                    console.log("Loaded tree data:", json_tree);
                     window.root = json_tree[0];
+                    window.finder = new HaplogroupFinder(window.root);
                     determineAndShowHaplogroup(mutations);
                 });
             } else {
+                console.log("Using existing tree data");
+                if (!window.finder) {
+                    console.log("Creating new finder");
+                    window.finder = new HaplogroupFinder(window.root);
+                }
                 determineAndShowHaplogroup(mutations);
             }
         }
 
         function determineAndShowHaplogroup(mutations) {
-            var haplogroup = determineHaplogroup(mutations);
-            if (haplogroup) {
-                showSuccess('These mutations belong to haplogroup: ' + haplogroup);
-            } else {
-                showError('Could not determine haplogroup. Make sure your sample contains the reference mutations: 2679.1G, 6065, 8368, 9914.1GT');
+            try {
+                const result = window.finder.findHaplogroup(mutations);
+                
+                if (result) {
+                    let message = 'These mutations belong to haplogroup: ' + result.name;
+                    if (result.modifications && result.modifications.length > 0) {
+                        message += '\nHaplogroup modifications: ' + result.modifications.join(', ');
+                    }
+                    showSuccess(message);
+                } else {
+                    showError('Could not determine haplogroup. Make sure your sample contains the reference mutations: 2679.1G, 6065, 8368, 9914.1GT');
+                }
+            } catch (error) {
+                showError('Error determining haplogroup: ' + error.message);
             }
         }
 
